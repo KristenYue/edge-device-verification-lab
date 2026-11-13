@@ -1,6 +1,6 @@
 # Edge Device Verification Lab
 
-[![CI configured](docs/assets/ci-configured.svg)](.github/workflows/ci.yml)
+[![validation](https://github.com/KristenYue/edge-device-verification-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/KristenYue/edge-device-verification-lab/actions/workflows/ci.yml)
 [![Python 3.11-3.12](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB)](pyproject.toml)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-00599C)](CMakeLists.txt)
 [![Tests](https://img.shields.io/badge/tests-98%20passed-2EA44F)](docs/RELEASE_QUALIFICATION_REPORT.md)
@@ -77,7 +77,7 @@ stateDiagram-v2
 | Full Python suite | unit + interface + integration + recovery | 98 passed, 1 Windows-only skip |
 | Python coverage | statement + branch coverage | 83.30% |
 
-The result above was rechecked locally on 2026-11-13. A configured workflow is not described as remote CI evidence until it has actually run in GitHub Actions. The Linux workflow enables ASan/UBSan for both CTest and Python-driven simulator tests.
+The result above was rechecked locally on 2026-11-13. The first remote GitHub Actions matrix also passed on Windows and Linux with Python 3.11/3.12; Linux runs enable ASan/UBSan for both CTest and Python-driven simulator tests.
 
 ## Quick start
 
@@ -163,11 +163,11 @@ Supported claims:
 - implemented a C++17 device simulator and Python verification harness;
 - validated state guards, fault recovery, TCP framing, retries and idempotency;
 - completed one CTest target and 98 Python tests locally (one POSIX signal case skipped on Windows);
-- configured cross-platform CI for Windows/Linux and Python 3.11/3.12.
+- passed cross-platform GitHub Actions on Windows/Linux and Python 3.11/3.12.
 
 Unsupported claims:
 
 - production hardware or hardware-in-the-loop validation;
 - Linux kernel or device-driver development;
 - real-time guarantees, industry certification or deployment to a customer site;
-- a successful remote CI run before GitHub Actions produces that evidence.
+- hardware, real-time or production-readiness claims beyond the checked evidence.

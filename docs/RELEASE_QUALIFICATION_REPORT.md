@@ -1,16 +1,16 @@
 # Release Qualification Report
 
 - Run ID: `LOCAL-WIN-2026-11-13-EDGE-01`
-- Build revision: working-tree qualification snapshot
+- Build revision: `1aae43c63af27f5764fd06acccac23588afffaed`
 - Environment: Windows 11, Visual Studio Build Tools 2022 17.13.2 / MSVC 14.43, Python 3.12.14
 - Simulator SHA-256: not frozen; record after the first clean release build
-- Result: **CONDITIONAL**
+- Result: **GO**
 
 ## Test results
 
 | Suite | Passed | Failed | Skipped | Evidence |
 |---|---:|---:|---:|---|
-| C++ CTest | 1 test executable | 0 | 0 | local Release build and CTest output |
+| C++ CTest | 1 test executable | 0 | 0 | local Release build plus Windows/Linux Actions matrix |
 | Python automated suite | 98 | 0 | 1 | local pytest output; POSIX signal case skipped on Windows |
 | Coverage gate | 83.30% total | 0 | 0 | `coverage.xml` (branch coverage enabled; gate 80%) |
 | Static checks | Ruff PASS; mypy PASS | 0 | 0 | local command output |
@@ -44,10 +44,10 @@ The additional communications demonstration established ONLINE/REMOTE control, s
 The detailed result is recorded in `REQUIREMENTS_TRACEABILITY_MATRIX.csv`.
 
 - Local functional, safety, interface and evidence requirements: PASS
-- `QUAL-001` cross-platform C++ CI matrix: PLANNED
-- `QUAL-003` Python-version CI matrix: PLANNED
+- `QUAL-001` cross-platform C++ CI matrix: PASS
+- `QUAL-003` Python-version CI matrix: PASS
 
-The two CI requirements remain PLANNED because a workflow file is present but no remote GitHub Actions run has been executed. They are not represented as passed by this report.
+GitHub Actions run [`43424447863`](https://github.com/KristenYue/edge-device-verification-lab/actions/runs/43424447863) passed all four Windows/Linux and Python 3.11/3.12 matrix jobs. Linux CTest and Python-driven simulator tests ran with ASan/UBSan enabled.
 
 ## Failures and defects
 
@@ -67,13 +67,13 @@ Neither defect is open in this qualification snapshot. Details and reproduction 
 - The parser intentionally supports only this project's flat JSON command schema; it is not a general-purpose JSON implementation.
 - The device-control layer is a project-specific JSON Lines contract, not an industry protocol or certification target.
 - No GUI, database or multi-hour endurance run is included.
-- Linux and the Python 3.11/3.12 remote matrix are configured but not yet evidenced by a CI run.
+- C++ coverage is not collected by the current workflow; sanitizer and behavioral evidence are not a substitute for C++ line coverage.
 
 See `KNOWN_LIMITATIONS.md` for the complete evidence boundary.
 
 ## Recommendation
 
-**CONDITIONAL release for portfolio demonstration and interview discussion.** The Windows local build, automated functional suite, safety/fault recovery flow, trace diagnostics and quality checks pass. Promote the result to **GO for cross-platform release** only after the first GitHub Actions run passes the configured Windows/Linux and Python-version matrices.
+**GO for the documented cross-platform portfolio scope.** The Windows/Linux build matrix, Python 3.11/3.12 tests, Linux sanitizers, automated functional suite, safety/fault recovery flow, trace diagnostics and static checks pass. This result does not extend to physical hardware, real-time guarantees or production deployment.
 
 
 

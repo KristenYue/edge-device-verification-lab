@@ -8,7 +8,7 @@ ordered by evidence value for system-software, developer-tooling and verificatio
 - Replaced the sequential accept loop with a configurable bounded worker pool.
 - Added queue-full `SERVER_BUSY`, synchronized runtime ownership and signal-aware shutdown.
 - Added concurrent duplicate-command, queue saturation and POSIX shutdown tests.
-- Configured ASan/UBSan on Ubuntu; remote evidence remains pending until Actions runs.
+- Passed the Ubuntu ASan/UBSan workflow in GitHub Actions run `43424447863`.
 
 Exit evidence:
 

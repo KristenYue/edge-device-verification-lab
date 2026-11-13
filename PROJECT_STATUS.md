@@ -1,6 +1,6 @@
 # Project Status
 
-Status as of 2026-11-13: **domain-neutral refactor complete and locally qualified**.
+Status as of 2026-11-13: **domain-neutral refactor complete and cross-platform qualified**.
 
 ## Completed
 
@@ -22,10 +22,10 @@ Status as of 2026-11-13: **domain-neutral refactor complete and locally qualifie
 - Python branch coverage 83.30% with an 80% CI gate
 - Normal-flow plus injected-fault recovery demonstration
 - Professional README, traceability update, defect reports and walkthrough GIF
+- GitHub Actions PASS on Windows/Linux with Python 3.11/3.12; Linux ASan/UBSan PASS
 
 ## Intentionally deferred
 
-- Remote GitHub Actions evidence
 - Physical hardware or hardware-in-the-loop integration
 - Third-party industry-protocol compatibility or certification
 - GUI and persistent database
@@ -36,7 +36,7 @@ Deferred items are extensions, not prerequisites for explaining the current MVP.
 
 ## Recommended next action
 
-Publish the standalone repository and let GitHub Actions produce the missing cross-platform evidence. Do not replace the configured-CI badge with a passing badge until a real remote run succeeds.
+Preserve the passing cross-platform workflow as release evidence, then add measured endurance or throughput results only after a repeatable benchmark protocol exists.
 
 
 

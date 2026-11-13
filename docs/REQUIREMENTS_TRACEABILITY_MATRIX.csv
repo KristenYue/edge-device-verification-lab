@@ -27,9 +27,9 @@ INT-004,PASS,CPP-protocol-crc;PY-crc-corruption,CTest and JUnit
 INT-005,PASS,PY-e2e-trace,JSONL event log
 INT-006,PASS,PY-e2e-trace,Diagnostic summary
 INT-007,PASS,PY-diagnostics,JUnit
-QUAL-001,PLANNED,CI-build-matrix,Requires first remote CI run
+QUAL-001,PASS,CI-build-matrix,GitHub Actions run 43424447863
 QUAL-002,PASS,LOCAL-CTest,Local CTest output
-QUAL-003,PLANNED,CI-python-matrix,Requires first remote CI run
+QUAL-003,PASS,CI-python-matrix,GitHub Actions run 43424447863
 QUAL-004,PASS,LOCAL-JUnit,artifacts/junit.xml
 QUAL-005,PASS,LOCAL-coverage,coverage.xml
 QUAL-006,PASS,LOCAL-demo,Documented local reproduction
