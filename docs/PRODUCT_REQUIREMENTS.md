@@ -76,6 +76,20 @@ These requirements describe the project-specific JSON Lines control protocol.
 | CTRL-010 | Reused IDs with different content shall be rejected. | Response is `REQUEST_ID_CONFLICT`. |
 | CTRL-011 | Transport shall tolerate split and coalesced TCP frames. | Half-packet and sticky-packet integration cases pass. |
 | CTRL-012 | Timed-out requests shall be retryable with a stable ID. | Retry returns cached response without duplicate execution. |
+| CTRL-013 | Connection concurrency shall be bounded. | A full connection queue returns `SERVER_BUSY` instead of growing without limit. |
+| CTRL-014 | Concurrent duplicate commands shall execute once. | All identical concurrent IDs receive one cached sequence and run count remains one. |
+
+## Smart Shelf adapter requirements
+
+These requirements apply only to the documented Smart Shelf v1 JSON/MQTT contract and synthetic fixtures; they do not claim physical-device validation.
+
+| ID | Requirement | Acceptance criterion |
+|---|---|---|
+| IOT-001 | Only known device identities and valid telemetry fields shall be accepted. | Invalid IDs, types and ranges raise a contract error. |
+| IOT-002 | Duplicate, out-of-order and same-timestamp conflicting telemetry shall be classified separately. | Adapter tests observe each distinct result. |
+| IOT-003 | Ordering state shall be isolated per device. | A newer sample on one shelf does not reject a valid sample on another. |
+| IOT-004 | Concurrent identical telemetry shall create one accepted record. | 32 submissions produce one accepted record and 31 duplicates. |
+| IOT-005 | Command authorization shall follow the device/topic contract. | Shared commands work for both shelves; ACK is restricted to shelf 2. |
 
 
 

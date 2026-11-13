@@ -11,15 +11,16 @@
 | Suite | Passed | Failed | Skipped | Evidence |
 |---|---:|---:|---:|---|
 | C++ CTest | 1 test executable | 0 | 0 | local Release build and CTest output |
-| Python automated suite | 80 | 0 | 0 | `artifacts/junit.xml` |
-| Coverage gate | 82% total | 0 | 0 | `coverage.xml` (branch coverage enabled; gate 80%) |
+| Python automated suite | 98 | 0 | 1 | local pytest output; POSIX signal case skipped on Windows |
+| Coverage gate | 83.30% total | 0 | 0 | `coverage.xml` (branch coverage enabled; gate 80%) |
 | Static checks | Ruff PASS; mypy PASS | 0 | 0 | local command output |
 | Recovery demonstration | 1 complete scenario | 0 | 0 | `artifacts/demo-events.jsonl` and console summary |
 | Device-control demo | 1 complete scenario | 0 | 0 | `artifacts/control-protocol-demo-events.jsonl` |
 
 The Python total combines unit, boundary, protocol-negative, integration, recovery,
 repeated-run and device-control cases. The C++ executable contains the state-machine,
-profile, fault and protocol checks registered by CTest.
+profile, fault, protocol and bounded-queue checks registered by CTest. The suite also
+includes Smart Shelf v1 contract, ordering, isolation and authorization cases.
 
 ## Demonstration evidence
 
@@ -62,7 +63,7 @@ Neither defect is open in this qualification snapshot. Details and reproduction 
 
 - No real batch, optics, motion controller, vacuum system or hardware-in-the-loop setup is used.
 - Run values are deterministic software-test data, not a physical edge device model.
-- The TCP simulator accepts concurrent connection attempts but processes clients sequentially and is not a real-time controller.
+- The TCP simulator uses a bounded worker pool and an explicit overload response, but shared device-state changes remain serialized and no real-time guarantee is made.
 - The parser intentionally supports only this project's flat JSON command schema; it is not a general-purpose JSON implementation.
 - The device-control layer is a project-specific JSON Lines contract, not an industry protocol or certification target.
 - No GUI, database or multi-hour endurance run is included.

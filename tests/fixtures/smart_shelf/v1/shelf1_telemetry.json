@@ -1,0 +1,13 @@
+{
+  "deviceID": "smart-shelf-01",
+  "timestamp": 1794513601,
+  "temperatureC": 5.0,
+  "humidityPct": 45.0,
+  "pressureKPa": 101.3,
+  "distanceCm": 60.0,
+  "lightRaw": 420,
+  "customerPresent": true,
+  "visitorCount": 7,
+  "interactionCount": 3,
+  "environmentAlert": false
+}

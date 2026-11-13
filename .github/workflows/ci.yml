@@ -16,11 +16,18 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Configure C++ with sanitizers
+        if: runner.os == 'Linux'
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DEDGE_ENABLE_SANITIZERS=ON
       - name: Configure C++
+        if: runner.os == 'Windows'
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
       - name: Build C++
         run: cmake --build build --config Debug
       - name: Run C++ tests
+        env:
+          ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+          UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
         run: ctest --test-dir build -C Debug --output-on-failure
       - name: Install Python package
         run: python -m pip install -e ".[dev]"
@@ -38,6 +45,9 @@ jobs:
           ruff check src tests scripts/run_demo.py
           mypy src
       - name: Python tests and coverage
+        env:
+          ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+          UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
         run: pytest --junitxml=artifacts/junit.xml --cov --cov-branch --cov-fail-under=80 --cov-report=term-missing --cov-report=xml:coverage.xml
       - uses: actions/upload-artifact@v4
         if: always()

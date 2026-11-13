@@ -3,12 +3,12 @@
 The repository is already a runnable C++17/Python validation baseline. The next work is
 ordered by evidence value for system-software, developer-tooling and verification roles.
 
-## P1: Linux concurrency and process behavior
+## P1: Linux concurrency and process behavior - implemented locally
 
-- Replace the sequential accept loop with a bounded worker pool.
-- Add clean shutdown, worker ownership and backpressure behavior.
-- Add tests for concurrent state-changing requests and shutdown during active work.
-- Run ASan/UBSan on Ubuntu and retain the workflow evidence.
+- Replaced the sequential accept loop with a configurable bounded worker pool.
+- Added queue-full `SERVER_BUSY`, synchronized runtime ownership and signal-aware shutdown.
+- Added concurrent duplicate-command, queue saturation and POSIX shutdown tests.
+- Configured ASan/UBSan on Ubuntu; remote evidence remains pending until Actions runs.
 
 Exit evidence:
 
@@ -16,13 +16,11 @@ Exit evidence:
 - documented maximum queue size and rejection behavior;
 - deterministic concurrent-request tests in CI.
 
-## P2: Smart-shelf protocol adapter
+## P2: Smart-shelf protocol adapter - implemented locally
 
-- Add a simulator profile using the public telemetry and command contract from the
-  `smart-supermarket-shelf` project.
-- Model two device identities, telemetry sequence numbers, duplicate messages and
-  out-of-order delivery.
-- Keep MQTT/AWS integration optional; the default test path remains local and key-free.
+- Added versioned v1 telemetry fixtures based on the public Smart Shelf contract.
+- Added two-device validation, ordering, duplicate/conflict handling and command authorization.
+- Kept MQTT/AWS execution outside the adapter; the default path is local and key-free.
 
 Exit evidence:
 

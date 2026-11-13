@@ -3,7 +3,7 @@
 [![CI configured](docs/assets/ci-configured.svg)](.github/workflows/ci.yml)
 [![Python 3.11-3.12](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB)](pyproject.toml)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-00599C)](CMakeLists.txt)
-[![Tests](https://img.shields.io/badge/tests-80%20passed-2EA44F)](docs/RELEASE_QUALIFICATION_REPORT.md)
+[![Tests](https://img.shields.io/badge/tests-98%20passed-2EA44F)](docs/RELEASE_QUALIFICATION_REPORT.md)
 
 一个可在本地复现的 C++17/Python 设备仿真与系统验证项目。C++ 进程实现设备状态机、TCP JSON Lines 协议、安全联锁、故障注入和幂等响应；Python/pytest 从公开接口完成契约、边界、并发、超时、恢复和发布验证。
 
@@ -57,11 +57,13 @@ stateDiagram-v2
 | C++ core | state guards, profile boundaries, interlocks, protocol parser | CTest passed |
 | Python unit | Pydantic contracts, diagnostics, reporting, error classification | passed |
 | Interface | CRC, malformed input, half/sticky packets, request-ID conflicts | passed |
-| Reliability | timeout retry, duplicate idempotency, 12 concurrent correlations | passed |
+| Reliability | bounded worker pool, overload response, timeout retry, concurrent idempotency | passed |
+| Smart Shelf adapter | v1 telemetry, device isolation, ordering/conflict classification, command authorization | passed |
 | System | normal run, E-Stop, actuator stuck, sensor drift and recovery | passed |
-| Full Python suite | unit + interface + integration + recovery | 80 passed |
+| Full Python suite | unit + interface + integration + recovery | 98 passed, 1 Windows-only skip |
+| Python coverage | statement + branch coverage | 83.30% |
 
-The result above was rechecked locally on 2026-11-13. A configured workflow is not described as remote CI evidence until it has actually run in GitHub Actions.
+The result above was rechecked locally on 2026-11-13. A configured workflow is not described as remote CI evidence until it has actually run in GitHub Actions. The Linux workflow enables ASan/UBSan for both CTest and Python-driven simulator tests.
 
 ## Quick start
 
@@ -93,6 +95,14 @@ Run the end-to-end demonstrations:
 .\.venv\Scripts\python.exe scripts\run_demo.py
 .\.venv\Scripts\python.exe scripts\run_control_protocol_demo.py
 ```
+
+The simulator defaults to four workers and a bounded queue of 32 connections. Both are configurable:
+
+```powershell
+.\build\edge_device_simulator.exe --workers 4 --queue-capacity 32
+```
+
+When the queue is full, new connections receive an explicit `SERVER_BUSY` response.
 
 ## Fault injection
 
@@ -130,6 +140,7 @@ The same request ID is reused after the timeout. If the first request completed,
 - `docs/RELEASE_QUALIFICATION_REPORT.md`: current local evidence;
 - `docs/KNOWN_LIMITATIONS.md`: explicit non-claims and deferred work.
 - `docs/ROADMAP.md`: next engineering increments and their evidence gates.
+- `docs/SMART_SHELF_ADAPTER.md`: contract source boundary and covered Smart Shelf scenarios.
 
 ## Evidence boundary
 
@@ -137,7 +148,7 @@ Supported claims:
 
 - implemented a C++17 device simulator and Python verification harness;
 - validated state guards, fault recovery, TCP framing, retries and idempotency;
-- completed one CTest target and 80 Python tests locally;
+- completed one CTest target and 98 Python tests locally (one POSIX signal case skipped on Windows);
 - configured cross-platform CI for Windows/Linux and Python 3.11/3.12.
 
 Unsupported claims:

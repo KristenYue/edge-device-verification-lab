@@ -1,0 +1,11 @@
+{
+  "deviceID": "smart-shelf-02",
+  "timestamp": 1794513601,
+  "weightG": 220.5,
+  "soundRaw": 80,
+  "lightRaw": 350,
+  "buttonPressed": false,
+  "state": "NORMAL",
+  "uptimeMs": 120000,
+  "scaleHealthy": true
+}

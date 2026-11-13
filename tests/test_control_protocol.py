@@ -1,7 +1,11 @@
 from __future__ import annotations
 
 import json
+import os
+import signal
 import socket
+import subprocess
+import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -12,6 +16,12 @@ from edge_validation.control_protocol import DeviceControlHost
 from edge_validation.models import DeviceState, TaskProfile
 
 pytestmark = pytest.mark.integration
+
+
+def _free_port() -> int:
+    with socket.socket() as sock:
+        sock.bind(("127.0.0.1", 0))
+        return int(sock.getsockname()[1])
 
 
 def _online_remote(client: DeviceClient) -> DeviceControlHost:
@@ -111,6 +121,26 @@ def test_duplicate_start_is_idempotent(
     assert host.variables()["RUN_COUNT"] == "1"
 
 
+def test_concurrent_duplicate_start_executes_once(
+    simulator: tuple[DeviceClient, Path],
+) -> None:
+    client, _ = simulator
+    _prepare_process(client)
+    host = _online_remote(client)
+    host.select_profile(
+        TaskProfile(name="concurrent", sample_count=32, noise_sigma=0, drift_limit=0.2)
+    )
+
+    def start(_: int):
+        return host.start(request_id="concurrent-start-1")
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        results = list(pool.map(start, range(16)))
+    assert {result.sequence for result in results} == {results[0].sequence}
+    assert {result.data["run_id"] for result in results} == {"R-1"}
+    assert host.variables()["RUN_COUNT"] == "1"
+
+
 def test_reused_request_id_with_different_content_is_rejected(
     simulator: tuple[DeviceClient, Path],
 ) -> None:
@@ -170,6 +200,67 @@ def test_timeout_retry_replays_cached_response(
     response = host._send("status", request_id="retry-status-1")
     assert response.ok
     assert response.request_id == "retry-status-1"
+
+
+def test_bounded_connection_queue_returns_server_busy(tmp_path: Path) -> None:
+    binary_value = os.environ.get("EDGE_SIMULATOR_BIN")
+    if not binary_value:
+        pytest.skip("EDGE_SIMULATOR_BIN is not configured")
+    port = _free_port()
+    process = subprocess.Popen(
+        [
+            binary_value,
+            "--port",
+            str(port),
+            "--log",
+            str(tmp_path / "backpressure.jsonl"),
+            "--workers",
+            "1",
+            "--queue-capacity",
+            "1",
+        ],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    sockets: list[socket.socket] = []
+    try:
+        assert process.stdout is not None
+        assert process.stdout.readline().startswith("READY")
+        first = socket.create_connection(("127.0.0.1", port), timeout=1)
+        sockets.append(first)
+        time.sleep(0.1)
+        second = socket.create_connection(("127.0.0.1", port), timeout=1)
+        sockets.append(second)
+        time.sleep(0.1)
+        rejected = socket.create_connection(("127.0.0.1", port), timeout=1)
+        sockets.append(rejected)
+        rejected.settimeout(1)
+        payload = json.loads(rejected.recv(4096).decode("utf-8"))
+        assert payload["code"] == "SERVER_BUSY"
+    finally:
+        for connection in sockets:
+            connection.close()
+        process.terminate()
+        process.wait(timeout=3)
+
+
+@pytest.mark.skipif(os.name == "nt", reason="POSIX signal shutdown evidence")
+def test_sigterm_stops_workers_cleanly(tmp_path: Path) -> None:
+    binary_value = os.environ.get("EDGE_SIMULATOR_BIN")
+    if not binary_value:
+        pytest.skip("EDGE_SIMULATOR_BIN is not configured")
+    port = _free_port()
+    process = subprocess.Popen(
+        [binary_value, "--port", str(port), "--log", str(tmp_path / "shutdown.jsonl")],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    assert process.stdout is not None
+    assert process.stdout.readline().startswith("READY")
+    process.send_signal(signal.SIGTERM)
+    assert process.wait(timeout=3) == 0
 
 
 

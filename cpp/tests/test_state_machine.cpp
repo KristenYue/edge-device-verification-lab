@@ -1,5 +1,6 @@
 #include "edge/protocol.hpp"
 #include "edge/state_machine.hpp"
+#include "edge/bounded_queue.hpp"
 
 #include <cstdlib>
 #include <iostream>
@@ -127,6 +128,20 @@ void test_simplified_protocol_control() {
           "control protocol alarm can be cleared");
 }
 
+void test_bounded_queue() {
+    edge::BoundedQueue<int> queue(2);
+    check(queue.capacity() == 2, "queue exposes configured capacity");
+    check(queue.try_push(10), "first queue item accepted");
+    check(queue.try_push(20), "second queue item accepted");
+    check(!queue.try_push(30), "queue rejects work above capacity");
+    check(queue.size() == 2, "queue size is bounded");
+    check(queue.pop() == 10, "queue preserves FIFO order");
+    check(queue.pop() == 20, "queue returns second item");
+    queue.stop();
+    check(!queue.try_push(40), "stopped queue rejects new work");
+    check(!queue.pop().has_value(), "stopped empty queue wakes consumers");
+}
+
 }  // namespace
 
 int main() {
@@ -136,6 +151,7 @@ int main() {
     test_faults_and_safety();
     test_protocol();
     test_simplified_protocol_control();
+    test_bounded_queue();
     if (failures == 0) {
         std::cout << "All edge device core tests passed\n";
         return EXIT_SUCCESS;

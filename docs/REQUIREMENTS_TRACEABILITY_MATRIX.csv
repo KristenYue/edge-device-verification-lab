@@ -45,6 +45,13 @@ CTRL-009,PASS,PY-control-duplicate-idempotency,Original sequence and one run
 CTRL-010,PASS,PY-request-id-conflict,Explicit conflict response
 CTRL-011,PASS,PY-tcp-half-sticky,Raw socket integration evidence
 CTRL-012,PASS,PY-timeout-retry-cache,Timeout retry integration evidence
+CTRL-013,PASS,CPP-bounded-queue;PY-server-busy,CTest and raw socket integration evidence
+CTRL-014,PASS,PY-concurrent-duplicate-start,Concurrent integration evidence
+IOT-001,PASS,PY-shelf-contract-fixtures;PY-shelf-invalid-device,Versioned fixtures and unit evidence
+IOT-002,PASS,PY-shelf-ordering-classification,Unit evidence
+IOT-003,PASS,PY-shelf-device-isolation,Unit evidence
+IOT-004,PASS,PY-shelf-concurrent-deduplication,Threaded unit evidence
+IOT-005,PASS,PY-shelf-command-authorization,Unit evidence
 
 
 
