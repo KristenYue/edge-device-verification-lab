@@ -7,9 +7,9 @@
 [![Coverage](https://img.shields.io/badge/coverage-83.30%25-2EA44F)](coverage.xml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-一个可在本地复现的 C++17/Python 设备仿真与系统验证项目。C++ 进程实现设备状态机、TCP JSON Lines 协议、安全联锁、故障注入和幂等响应；Python/pytest 从公开接口完成契约、边界、并发、超时、恢复和发布验证。
+面向边缘设备与 IoT 终端在硬件联调前的软件验证场景，本项目搭建了一套可复现的 C++17/Python 设备控制与自动化验证平台。C++ 端模拟设备运行时、状态机、TCP 通信、安全联锁和故障响应；Python 端作为独立测试上位机，从公共接口验证协议、并发、超时重试、异常恢复和发布质量。
 
-> 本项目验证的是通用设备控制软件方法，不代表真实半导体设备、汽车 vECU、生产硬件或行业协议实现。所有状态、数据和故障均为项目自建的确定性测试模型。
+> 核心目标：在设备硬件、固件和上位机并行开发阶段，提前暴露状态转换、通信重试、并发重复执行、过载保护和异常恢复问题，并将结果沉淀为可自动回归、可追踪的工程证据。
 
 ![Validation walkthrough](docs/assets/validation-demo.gif)
 
@@ -23,14 +23,18 @@
 | Smart Shelf | two-device telemetry ordering, isolation, deduplication and command authorization | versioned fixtures + adapter tests |
 | Engineering process | CMake, Ruff, mypy, traceability and Windows/Linux CI | qualification report + Actions workflow |
 
-## Why this project
+## Engineering scenario
 
-目标是提供一条可以被代码、测试和运行证据共同支撑的工程链路：
+设备控制软件在进入真实硬件联调前，通常需要解决几类高风险问题：命令是否按正确状态顺序执行，网络超时后重试会不会触发重复动作，多客户端接入时状态是否一致，异常发生后系统能否回到安全状态，以及每次修改能否被稳定复验。本项目把这些问题拆成一条完整工程链路：
 
-- C++17：状态机、协议解析、Socket 服务、响应缓存和结构化事件；
-- Python：进程编排、强类型契约、超时/重试、诊断与报告；
-- 系统验证：异常输入、半包/粘包、重复请求、并发关联和故障恢复；
-- 工程工具：CMake、CTest、pytest、Ruff、mypy、coverage 和 GitHub Actions。
+| Actual engineering problem | Project design |
+|---|---|
+| 非法命令顺序可能让设备进入错误状态 | C++ 状态机、状态守卫、安全联锁和恢复路径 |
+| TCP 半包、粘包、超时和重传可能造成控制异常 | JSON Lines framing、CRC32、稳定请求 ID 和超时重试 |
+| 重复或并发控制命令可能执行多次 | 请求指纹、响应缓存和并发幂等测试 |
+| 突发连接可能耗尽服务资源 | 有界工作线程池、连接队列和 `SERVER_BUSY` 背压 |
+| IoT 遥测可能重复、乱序或跨设备串扰 | Smart Shelf 双设备契约、顺序分类和设备隔离 |
+| 修改后缺少统一的发布判断 | pytest/CTest、覆盖率、需求追踪和跨平台 GitHub Actions |
 
 ## Architecture
 
@@ -151,23 +155,18 @@ The same request ID is reused after the timeout. If the first request completed,
 - `docs/PRODUCT_REQUIREMENTS.md`: requirement baseline;
 - `docs/REQUIREMENTS_TRACEABILITY_MATRIX.csv`: requirement-to-test mapping;
 - `docs/INTERFACE_PROTOCOL.md`: wire contract;
-- `docs/RELEASE_QUALIFICATION_REPORT.md`: current local evidence;
-- `docs/KNOWN_LIMITATIONS.md`: explicit non-claims and deferred work.
+- `docs/RELEASE_QUALIFICATION_REPORT.md`: cross-platform qualification evidence;
+- `docs/KNOWN_LIMITATIONS.md`: scope assumptions and planned extensions.
 - `docs/ROADMAP.md`: next engineering increments and their evidence gates.
 - `docs/SMART_SHELF_ADAPTER.md`: contract source boundary and covered Smart Shelf scenarios.
 
-## Evidence boundary
+## Verified delivery
 
-Supported claims:
+当前版本已经形成从实现到发布证据的闭环：
 
-- implemented a C++17 device simulator and Python verification harness;
-- validated state guards, fault recovery, TCP framing, retries and idempotency;
-- completed one CTest target and 98 Python tests locally (one POSIX signal case skipped on Windows);
-- passed cross-platform GitHub Actions on Windows/Linux and Python 3.11/3.12.
-
-Unsupported claims:
-
-- production hardware or hardware-in-the-loop validation;
-- Linux kernel or device-driver development;
-- real-time guarantees, industry certification or deployment to a customer site;
-- hardware, real-time or production-readiness claims beyond the checked evidence.
+- C++17 设备运行时、Python 验证工具和 Smart Shelf 契约适配器均已实现；
+- 状态守卫、故障恢复、TCP framing、超时重试、幂等和过载保护均有自动化测试；
+- 本地完成 1 个 CTest 目标和 98 项 Python 测试，Python 覆盖率 83.30%；
+- GitHub Actions 已通过 Windows/Linux、Python 3.11/3.12 四组矩阵；
+- Linux 流水线同时通过 AddressSanitizer 和 UndefinedBehaviorSanitizer 检查；
+- 每项核心需求均可追溯到测试用例和发布证据。
