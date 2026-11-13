@@ -1,0 +1,50 @@
+requirement_id,status,test_ids,evidence
+SYS-001,PASS,CPP-state-start;PY-e2e-status,CTest and integration response
+SYS-002,PASS,CPP-happy-path;PY-e2e-run,CTest and JUnit
+SYS-003,PASS,CPP-state-guards;PY-boot-command-matrix,CTest and JUnit
+SYS-004,PASS,CPP-happy-path;PY-e2e-run,CTest and JUnit
+SYS-005,PASS,CPP-state-guards;PY-boot-command-matrix,CTest and JUnit
+SYS-006,PASS,CPP-happy-path;PY-e2e-run,CTest and JUnit
+SYS-007,PASS,CPP-state-guards,CTest
+SYS-008,PASS,PY-profile-name-boundaries,JUnit
+SYS-009,PASS,CPP-profile-boundaries;PY-sample-boundaries,CTest and JUnit
+SYS-010,PASS,CPP-profile-boundaries;PY-noise-boundaries,CTest and JUnit
+SYS-011,PASS,CPP-profile-boundaries;PY-drift-boundaries,CTest and JUnit
+SYS-012,PASS,PY-repeated-runs,JUnit
+SYS-013,PASS,PY-demo-reset,Demonstration evidence
+SYS-014,PASS,CPP-unknown-command,CTest
+SAFE-001,PASS,CPP-faults;PY-interlock,CTest and JUnit
+SAFE-002,PASS,CPP-faults,CTest
+SAFE-003,PASS,CPP-faults;PY-interlock,CTest and JUnit
+SAFE-004,PASS,CPP-faults;PY-actuator-recovery,CTest and JUnit
+SAFE-005,PASS,PY-sensor-drift,JUnit
+SAFE-006,PASS,CPP-faults;PY-actuator-recovery,CTest and JUnit
+SAFE-007,PASS,PY-response-timeout,JUnit
+INT-001,PASS,CPP-protocol-schema,CTest
+INT-002,PASS,PY-client-contract,JUnit
+INT-003,PASS,PY-client-contract,Pydantic response validation
+INT-004,PASS,CPP-protocol-crc;PY-crc-corruption,CTest and JUnit
+INT-005,PASS,PY-e2e-trace,JSONL event log
+INT-006,PASS,PY-e2e-trace,Diagnostic summary
+INT-007,PASS,PY-diagnostics,JUnit
+QUAL-001,PLANNED,CI-build-matrix,Requires first remote CI run
+QUAL-002,PASS,LOCAL-CTest,Local CTest output
+QUAL-003,PLANNED,CI-python-matrix,Requires first remote CI run
+QUAL-004,PASS,LOCAL-JUnit,artifacts/junit.xml
+QUAL-005,PASS,LOCAL-coverage,coverage.xml
+QUAL-006,PASS,LOCAL-demo,Documented local reproduction
+CTRL-001,PASS,PY-control-control-transitions,Initial status contract
+CTRL-002,PASS,PY-control-control-transitions,JUnit integration evidence
+CTRL-003,PASS,PY-control-control-transitions,JUnit negative evidence
+CTRL-004,PASS,PY-control-local-guard,JUnit negative evidence
+CTRL-005,PASS,PY-control-profile-start;PY-control-invalid-profile,JUnit integration evidence
+CTRL-006,PASS,PY-control-profile-start,JUnit integration evidence
+CTRL-007,PASS,PY-control-profile-start,Variable response contract
+CTRL-008,PASS,PY-control-alarm-clear,Alarm and recovery evidence
+CTRL-009,PASS,PY-control-duplicate-idempotency,Original sequence and one run
+CTRL-010,PASS,PY-request-id-conflict,Explicit conflict response
+CTRL-011,PASS,PY-tcp-half-sticky,Raw socket integration evidence
+CTRL-012,PASS,PY-timeout-retry-cache,Timeout retry integration evidence
+
+
+

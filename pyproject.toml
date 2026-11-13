@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "edge-device-verification"
+version = "0.2.0"
+description = "C++17 device simulator with a Python system-validation and fault-injection harness"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["pydantic>=2.7,<3"]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.2,<9",
+  "pytest-cov>=5,<7",
+  "pytest-timeout>=2.3,<3",
+  "ruff>=0.6,<1",
+  "mypy>=1.11,<2",
+]
+demo = ["Pillow>=10,<13"]
+
+[project.scripts]
+edge-validate = "edge_validation.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-markers"
+testpaths = ["tests"]
+markers = [
+  "integration: requires the compiled C++ simulator",
+  "stability: extended repeatability and stability tests",
+]
+
+[tool.coverage.run]
+source = ["edge_validation"]
+branch = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+
+
+
