@@ -15,10 +15,13 @@ Status as of 2026-11-13: **domain-neutral refactor complete and locally qualifie
 - Alarm, event and variable reporting with explicit protocol boundaries
 - TCP half/sticky packet validation, concurrent correlation and duplicate-message idempotency
 - Stable-ID timeout retry and request-ID conflict detection
-- Windows Release build, CTest, Ruff, mypy and 80-test Python regression run
-- Python branch coverage 82% with an 80% CI gate
+- Bounded C++ worker pool, explicit `SERVER_BUSY` backpressure and signal-aware shutdown
+- Concurrent duplicate-command execution protected by request fingerprinting and response caching
+- Smart Shelf v1 contract adapter with two-device ordering, isolation and authorization checks
+- Windows Release build, CTest, Ruff, mypy and 98-test Python regression run
+- Python branch coverage 83.30% with an 80% CI gate
 - Normal-flow plus injected-fault recovery demonstration
-- Professional README, traceability update, defect report and 60-second walkthrough GIF
+- Professional README, traceability update, defect reports and walkthrough GIF
 
 ## Intentionally deferred
 
@@ -26,14 +29,14 @@ Status as of 2026-11-13: **domain-neutral refactor complete and locally qualifie
 - Physical hardware or hardware-in-the-loop integration
 - Third-party industry-protocol compatibility or certification
 - GUI and persistent database
-- Parallel processing and real-time guarantees
+- Parallel state mutation and real-time guarantees
 - Long-duration endurance and performance qualification
 
 Deferred items are extensions, not prerequisites for explaining the current MVP. Do not present them as completed in a resume or interview.
 
 ## Recommended next action
 
-Initialize a standalone Git repository, publish it, and let GitHub Actions produce the missing cross-platform evidence. Do not replace the configured-CI badge with a passing badge until a real remote run succeeds.
+Publish the standalone repository and let GitHub Actions produce the missing cross-platform evidence. Do not replace the configured-CI badge with a passing badge until a real remote run succeeds.
 
 
 

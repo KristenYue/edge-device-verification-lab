@@ -77,7 +77,18 @@ def main() -> None:
         ),
         ("Alarm", [("fault", "INTERLOCK_OPEN"), ("alarm report", "ALARM-1001 PASS")]),
         ("Recovery", [("timeout", "retry with stable ID"), ("response", "cached replay PASS")]),
-        ("Evidence", [("Python", "80 passed / 82% coverage"), ("C++", "CTest PASS")]),
+        (
+            "Concurrency",
+            [
+                ("worker pool", "bounded queue + backpressure PASS"),
+                ("duplicate START", "one execution PASS"),
+            ],
+        ),
+        (
+            "Smart Shelf",
+            [("telemetry", "ordering + isolation PASS"), ("commands", "device authorization PASS")],
+        ),
+        ("Evidence", [("Python", "98 passed / 83.30% coverage"), ("C++", "CTest PASS")]),
         (
             "Traceability",
             [("requirements", "mapped to tests"), ("release", "qualified with limits")],

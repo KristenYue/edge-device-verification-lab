@@ -4,10 +4,24 @@
 [![Python 3.11-3.12](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB)](pyproject.toml)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-00599C)](CMakeLists.txt)
 [![Tests](https://img.shields.io/badge/tests-98%20passed-2EA44F)](docs/RELEASE_QUALIFICATION_REPORT.md)
+[![Coverage](https://img.shields.io/badge/coverage-83.30%25-2EA44F)](coverage.xml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 一个可在本地复现的 C++17/Python 设备仿真与系统验证项目。C++ 进程实现设备状态机、TCP JSON Lines 协议、安全联锁、故障注入和幂等响应；Python/pytest 从公开接口完成契约、边界、并发、超时、恢复和发布验证。
 
 > 本项目验证的是通用设备控制软件方法，不代表真实半导体设备、汽车 vECU、生产硬件或行业协议实现。所有状态、数据和故障均为项目自建的确定性测试模型。
+
+![Validation walkthrough](docs/assets/validation-demo.gif)
+
+## At a glance
+
+| Capability | Implementation | Evidence |
+|---|---|---|
+| Device runtime | C++17 state machine, safety interlocks and deterministic faults | CTest + TCP system tests |
+| Concurrent service | bounded worker pool, synchronized ownership and `SERVER_BUSY` backpressure | saturation and concurrent-idempotency tests |
+| Validation host | Python contracts, timeout/retry, CRC32, diagnostics and reporting | 98 pytest cases, 83.30% coverage |
+| Smart Shelf | two-device telemetry ordering, isolation, deduplication and command authorization | versioned fixtures + adapter tests |
+| Engineering process | CMake, Ruff, mypy, traceability and Windows/Linux CI | qualification report + Actions workflow |
 
 ## Why this project
 
