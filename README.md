@@ -4,7 +4,7 @@
 [![Python 3.11-3.12](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB)](pyproject.toml)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-00599C)](CMakeLists.txt)
 [![自动化测试](https://img.shields.io/badge/pytest-98%20passed-2EA44F)](docs/RELEASE_QUALIFICATION_REPORT.md)
-[![测试覆盖率](https://img.shields.io/badge/coverage-83.30%25-2EA44F)](coverage.xml)
+[![测试覆盖率](https://img.shields.io/badge/coverage-83.30%25-2EA44F)](docs/RELEASE_QUALIFICATION_REPORT.md)
 [![开源许可](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 面向边缘设备与 IoT 终端在**真实硬件联调前阶段**的软件验证需求，构建的一套 C++17/Python 设备仿真与自动化验证平台。
