@@ -5,6 +5,24 @@ on:
   pull_request:
 
 jobs:
+  thread-sanitizer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Build simulator with ThreadSanitizer
+        run: |
+          cmake -S . -B build-tsan -DCMAKE_BUILD_TYPE=Debug -DEDGE_ENABLE_TSAN=ON
+          cmake --build build-tsan
+          python -m pip install -e ".[dev]"
+      - name: Exercise concurrent device operations
+        env:
+          EDGE_SIMULATOR_BIN: ${{ github.workspace }}/build-tsan/edge_device_simulator
+          TSAN_OPTIONS: halt_on_error=1:exitcode=66
+        run: pytest -q tests/test_control_protocol.py -k concurrent
+
   build-and-test:
     strategy:
       matrix:

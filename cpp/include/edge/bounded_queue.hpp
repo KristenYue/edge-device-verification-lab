@@ -17,11 +17,12 @@ public:
     BoundedQueue(const BoundedQueue&) = delete;
     BoundedQueue& operator=(const BoundedQueue&) = delete;
 
-    bool try_push(T item) {
+    template <typename U>
+    bool try_push(U&& item) {
         {
             std::lock_guard<std::mutex> lock(mutex_);
             if (stopped_ || items_.size() >= capacity_) return false;
-            items_.push_back(std::move(item));
+            items_.emplace_back(std::forward<U>(item));
         }
         available_.notify_one();
         return true;

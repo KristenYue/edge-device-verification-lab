@@ -1,5 +1,9 @@
 # 边缘设备仿真与验证平台
 
+## C++ 运行时与实测证据
+
+Socket 资源管理、有界幂等缓存与排队过期保护已有本机结果。新旧版交替测得 4,200 次请求全部成功，吞吐中位数未提升。[运行复现、对照数据与 Bad Case](docs/RUNTIME_HARDENING.md)
+
 [![持续集成](https://github.com/KristenYue/edge-device-verification-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/KristenYue/edge-device-verification-lab/actions/workflows/ci.yml)
 [![Python 3.11-3.12](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB)](pyproject.toml)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-00599C)](CMakeLists.txt)

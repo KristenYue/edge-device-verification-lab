@@ -1,0 +1,152 @@
+[
+  {
+    "round": 1,
+    "cpu_seconds": 0.0,
+    "rss_before": 6586368,
+    "rss_after": 6586368,
+    "handles_before": 74,
+    "handles_after": 74,
+    "benchmark": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "clients": 4,
+      "command": "status",
+      "warmup": 100,
+      "requested": 1500,
+      "elapsed_seconds": 0.6032517000567168,
+      "successful_requests_per_second": 2486.5242814217886,
+      "outcomes": {
+        "ok": 1500
+      },
+      "successful_latency_ms": {
+        "50": 0.5743000074289739,
+        "95": 11.43349998164922,
+        "99": 22.48630003305152
+      }
+    }
+  },
+  {
+    "round": 2,
+    "cpu_seconds": 0.0,
+    "rss_before": 6483968,
+    "rss_after": 6483968,
+    "handles_before": 74,
+    "handles_after": 74,
+    "benchmark": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "clients": 4,
+      "command": "status",
+      "warmup": 100,
+      "requested": 1500,
+      "elapsed_seconds": 1.1377253999817185,
+      "successful_requests_per_second": 1318.4200686950496,
+      "outcomes": {
+        "ok": 1500
+      },
+      "successful_latency_ms": {
+        "50": 0.5304000223986804,
+        "95": 14.558600028976798,
+        "99": 22.917300055269152
+      }
+    }
+  },
+  {
+    "round": 3,
+    "cpu_seconds": 0.0,
+    "rss_before": 6610944,
+    "rss_after": 6610944,
+    "handles_before": 74,
+    "handles_after": 74,
+    "benchmark": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "clients": 4,
+      "command": "status",
+      "warmup": 100,
+      "requested": 1500,
+      "elapsed_seconds": 1.1764057000400499,
+      "successful_requests_per_second": 1275.0703264604495,
+      "outcomes": {
+        "ok": 1500
+      },
+      "successful_latency_ms": {
+        "50": 0.5306000239215791,
+        "95": 14.758500037714839,
+        "99": 24.2508000228554
+      }
+    }
+  },
+  {
+    "round": 1,
+    "cpu_seconds": 0.0,
+    "rss_before": 6471680,
+    "rss_after": 6471680,
+    "handles_before": 74,
+    "handles_after": 74,
+    "benchmark": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "clients": 4,
+      "command": "start_run",
+      "warmup": 100,
+      "requested": 1500,
+      "elapsed_seconds": 1.2161523000104353,
+      "successful_requests_per_second": 1233.3981525069921,
+      "outcomes": {
+        "ok": 1500
+      },
+      "successful_latency_ms": {
+        "50": 0.685799983330071,
+        "95": 15.36570000462234,
+        "99": 25.028200005181134
+      }
+    }
+  },
+  {
+    "round": 2,
+    "cpu_seconds": 0.0,
+    "rss_before": 6561792,
+    "rss_after": 6561792,
+    "handles_before": 74,
+    "handles_after": 74,
+    "benchmark": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "clients": 4,
+      "command": "start_run",
+      "warmup": 100,
+      "requested": 1500,
+      "elapsed_seconds": 1.8290496000554413,
+      "successful_requests_per_second": 820.0980443365411,
+      "outcomes": {
+        "ok": 1500
+      },
+      "successful_latency_ms": {
+        "50": 0.8197999559342861,
+        "95": 16.057199973147362,
+        "99": 25.51050001056865
+      }
+    }
+  },
+  {
+    "round": 3,
+    "cpu_seconds": 0.0,
+    "rss_before": 6524928,
+    "rss_after": 6524928,
+    "handles_before": 74,
+    "handles_after": 74,
+    "benchmark": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "clients": 4,
+      "command": "start_run",
+      "warmup": 100,
+      "requested": 1500,
+      "elapsed_seconds": 1.880337700014934,
+      "successful_requests_per_second": 797.7290462176485,
+      "outcomes": {
+        "ok": 1500
+      },
+      "successful_latency_ms": {
+        "50": 0.9944000048562884,
+        "95": 17.473299987614155,
+        "99": 25.83160001086071
+      }
+    }
+  }
+]

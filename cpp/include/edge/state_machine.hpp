@@ -62,6 +62,7 @@ public:
     State state() const noexcept;
     std::string state_name() const;
     const std::vector<Event>& events() const noexcept;
+    void clear_events() noexcept { events_.clear(); }
     std::uint64_t run_count() const noexcept;
     bool profile_loaded() const noexcept;
     CommunicationState communication_state() const noexcept;

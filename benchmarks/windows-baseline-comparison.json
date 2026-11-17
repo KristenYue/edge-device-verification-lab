@@ -1,0 +1,278 @@
+[
+  {
+    "version": "baseline",
+    "round": 1,
+    "handles": 74,
+    "rss_bytes": 5922816,
+    "data": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "clients": 4,
+      "command": "status",
+      "warmup": 30,
+      "requested": 350,
+      "elapsed_seconds": 0.13975799997569993,
+      "successful_requests_per_second": 2504.3289118394323,
+      "outcomes": {
+        "ok": 350
+      },
+      "successful_latency_ms": {
+        "50": 0.4977000062353909,
+        "95": 11.991599982138723,
+        "99": 22.993799997493625
+      }
+    }
+  },
+  {
+    "version": "current",
+    "round": 1,
+    "handles": 74,
+    "rss_bytes": 5988352,
+    "data": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "clients": 4,
+      "command": "status",
+      "warmup": 30,
+      "requested": 350,
+      "elapsed_seconds": 0.23192819999530911,
+      "successful_requests_per_second": 1509.0877263182267,
+      "outcomes": {
+        "ok": 350
+      },
+      "successful_latency_ms": {
+        "50": 0.450999999884516,
+        "95": 13.910200039390475,
+        "99": 24.257699958980083
+      }
+    }
+  },
+  {
+    "version": "current",
+    "round": 2,
+    "handles": 74,
+    "rss_bytes": 6004736,
+    "data": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "clients": 4,
+      "command": "status",
+      "warmup": 30,
+      "requested": 350,
+      "elapsed_seconds": 0.3236054999870248,
+      "successful_requests_per_second": 1081.5638177164278,
+      "outcomes": {
+        "ok": 350
+      },
+      "successful_latency_ms": {
+        "50": 0.5024000420235097,
+        "95": 15.03529999172315,
+        "99": 19.874599995091558
+      }
+    }
+  },
+  {
+    "version": "baseline",
+    "round": 2,
+    "handles": 74,
+    "rss_bytes": 5939200,
+    "data": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "clients": 4,
+      "command": "status",
+      "warmup": 30,
+      "requested": 350,
+      "elapsed_seconds": 0.22996500000590459,
+      "successful_requests_per_second": 1521.970734637938,
+      "outcomes": {
+        "ok": 350
+      },
+      "successful_latency_ms": {
+        "50": 0.49479998415336013,
+        "95": 13.794899976346642,
+        "99": 24.43340001627803
+      }
+    }
+  },
+  {
+    "version": "baseline",
+    "round": 3,
+    "handles": 74,
+    "rss_bytes": 5939200,
+    "data": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "clients": 4,
+      "command": "status",
+      "warmup": 30,
+      "requested": 350,
+      "elapsed_seconds": 0.2750165000325069,
+      "successful_requests_per_second": 1272.6509135220253,
+      "outcomes": {
+        "ok": 350
+      },
+      "successful_latency_ms": {
+        "50": 0.5454000202007592,
+        "95": 16.169300011824816,
+        "99": 24.511000025086105
+      }
+    }
+  },
+  {
+    "version": "current",
+    "round": 3,
+    "handles": 74,
+    "rss_bytes": 5984256,
+    "data": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "clients": 4,
+      "command": "status",
+      "warmup": 30,
+      "requested": 350,
+      "elapsed_seconds": 0.2784922000137158,
+      "successful_requests_per_second": 1256.7676939704684,
+      "outcomes": {
+        "ok": 350
+      },
+      "successful_latency_ms": {
+        "50": 0.5171999800950289,
+        "95": 15.498200024012476,
+        "99": 22.212899988517165
+      }
+    }
+  },
+  {
+    "version": "baseline",
+    "round": 1,
+    "handles": 74,
+    "rss_bytes": 6148096,
+    "data": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "clients": 4,
+      "command": "start_run",
+      "warmup": 30,
+      "requested": 350,
+      "elapsed_seconds": 0.33973030000925064,
+      "successful_requests_per_second": 1030.2289786647518,
+      "outcomes": {
+        "ok": 350
+      },
+      "successful_latency_ms": {
+        "50": 0.6071999669075012,
+        "95": 15.306799963582307,
+        "99": 24.91050004027784
+      }
+    }
+  },
+  {
+    "version": "current",
+    "round": 1,
+    "handles": 74,
+    "rss_bytes": 5992448,
+    "data": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "clients": 4,
+      "command": "start_run",
+      "warmup": 30,
+      "requested": 350,
+      "elapsed_seconds": 0.368294199986849,
+      "successful_requests_per_second": 950.3272112688654,
+      "outcomes": {
+        "ok": 350
+      },
+      "successful_latency_ms": {
+        "50": 0.6590000120922923,
+        "95": 15.951599983964115,
+        "99": 25.30569996451959
+      }
+    }
+  },
+  {
+    "version": "current",
+    "round": 2,
+    "handles": 74,
+    "rss_bytes": 5984256,
+    "data": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "clients": 4,
+      "command": "start_run",
+      "warmup": 30,
+      "requested": 350,
+      "elapsed_seconds": 0.370032699953299,
+      "successful_requests_per_second": 945.8623522844675,
+      "outcomes": {
+        "ok": 350
+      },
+      "successful_latency_ms": {
+        "50": 0.6964000058360398,
+        "95": 15.33320004818961,
+        "99": 22.842400008812547
+      }
+    }
+  },
+  {
+    "version": "baseline",
+    "round": 2,
+    "handles": 74,
+    "rss_bytes": 6254592,
+    "data": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "clients": 4,
+      "command": "start_run",
+      "warmup": 30,
+      "requested": 350,
+      "elapsed_seconds": 0.35464700002921745,
+      "successful_requests_per_second": 986.8968297241071,
+      "outcomes": {
+        "ok": 350
+      },
+      "successful_latency_ms": {
+        "50": 0.7044000085443258,
+        "95": 15.622900042217225,
+        "99": 25.030899967532605
+      }
+    }
+  },
+  {
+    "version": "baseline",
+    "round": 3,
+    "handles": 74,
+    "rss_bytes": 6139904,
+    "data": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "clients": 4,
+      "command": "start_run",
+      "warmup": 30,
+      "requested": 350,
+      "elapsed_seconds": 0.37584530003368855,
+      "successful_requests_per_second": 931.2342071821254,
+      "outcomes": {
+        "ok": 350
+      },
+      "successful_latency_ms": {
+        "50": 0.6846999749541283,
+        "95": 15.539000043645501,
+        "99": 25.253400031942874
+      }
+    }
+  },
+  {
+    "version": "current",
+    "round": 3,
+    "handles": 74,
+    "rss_bytes": 6004736,
+    "data": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "clients": 4,
+      "command": "start_run",
+      "warmup": 30,
+      "requested": 350,
+      "elapsed_seconds": 0.36833289999049157,
+      "successful_requests_per_second": 950.2273622829651,
+      "outcomes": {
+        "ok": 350
+      },
+      "successful_latency_ms": {
+        "50": 0.6910000229254365,
+        "95": 16.116500017233193,
+        "99": 25.39329999126494
+      }
+    }
+  }
+]
