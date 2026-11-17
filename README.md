@@ -1,25 +1,53 @@
 # 边缘设备仿真与验证平台
 
-## C++ 运行时与实测证据
-
-Socket 资源管理、有界幂等缓存与排队过期保护已有本机结果。新旧版交替测得 4,200 次请求全部成功，吞吐中位数未提升。[运行复现、对照数据与 Bad Case](docs/RUNTIME_HARDENING.md)
-
 [![持续集成](https://github.com/KristenYue/edge-device-verification-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/KristenYue/edge-device-verification-lab/actions/workflows/ci.yml)
-[![Python 3.11-3.12](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB)](pyproject.toml)
-[![C++17](https://img.shields.io/badge/C%2B%2B-17-00599C)](CMakeLists.txt)
-[![自动化测试](https://img.shields.io/badge/pytest-98%20passed-2EA44F)](docs/RELEASE_QUALIFICATION_REPORT.md)
-[![测试覆盖率](https://img.shields.io/badge/coverage-83.30%25-2EA44F)](docs/RELEASE_QUALIFICATION_REPORT.md)
 [![开源许可](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-面向边缘设备与 IoT 终端在**真实硬件联调前阶段**的软件验证需求，构建的一套 C++17/Python 设备仿真与自动化验证平台。
+**C++17 · TCP / JSON Lines · 设备状态机 · 有界并发 · Python 上位机**
 
-C++ 端模拟设备运行时、状态机、TCP 服务、安全联锁和故障响应；Python 端作为独立测试上位机，通过公共接口执行协议验证、故障注入、并发测试、超时重试、异常恢复和发布验收。
+面向设备、固件和上位机并行开发的联调场景。C++ 服务模拟设备从上电、归位、校准到运行和急停的过程，通过 TCP 提供可实际调用的控制接口。上位机可以在硬件接入前联调状态流转、命令重试和故障响应，并通过请求 ID 查到对应的设备事件。
 
-> 核心目标：在设备硬件、固件和上位机并行开发阶段，提前发现状态转换、重复命令、通信超时、并发过载和故障恢复问题，并将这些问题沉淀为可重复执行的自动化回归证据。
+[运行时设计与复现](docs/RUNTIME_HARDENING.md) · [排队超时实测](benchmarks/windows-queue-deadline.json) · [新旧版对照数据](benchmarks/windows-baseline-comparison.json)
 
-![验证流程演示](docs/assets/validation-demo.gif)
+## 系统架构
+
+```mermaid
+flowchart LR
+    A["Python 上位机或 Agent Worker"] -->|"TCP / JSON Lines"| B["连接接入与有界队列"]
+    B --> C["Worker 分帧与请求校验"]
+    C --> D["命令判重与设备状态机"]
+    D --> E["命令应答"]
+    D --> F["结构化设备事件"]
+```
+
+网络层负责连接管理、分帧和请求校验。设备核心负责状态流转、安全联锁和命令结果。调用方通过 TCP 使用同一套接口，能观察设备响应和事件轨迹。
+
+## 三个核心工程问题
+
+| 工程问题 | 实现机制 | 可核查行为 |
+| --- | --- | --- |
+| **设备已执行，客户端超时后重发怎么办？** | 在设备互斥锁内检查请求 ID 和指纹，执行命令并写入有界应答缓存。 | 同 ID、同载荷重用应答。同 ID、不同载荷返回冲突。缓存驱逐或进程重启后，调用方需重新查询设备状态。 |
+| **慢连接占住 Worker，后来的请求怎么办？** | 使用 Socket RAII 管理连接，配置 Worker 池与有界队列，为排队连接设置等待期限。 | 队列满时返回 `SERVER_BUSY`。已入队连接超期时返回 `QUEUE_TIMEOUT`，请求在进入设备状态机前被拒绝。 |
+| **上层错误地发送启动命令怎么办？** | 将命令合法性与急停联锁统一交给设备状态机判断，应答与设备事件通过请求 ID 关联。 | 已处于急停状态时，设备拒绝启动。调用方可以从响应码和事件轨迹判断拒绝发生在哪一层。 |
+
+## 实测与工程取舍
+
+| 记录 | 结果 |
+| --- | --- |
+| **默认资源配置** | **4 个 Worker、32 个排队位**，应答缓存采用 **1,024 条 FIFO**。 |
+| **慢连接复现** | 单 Worker 被半帧连接占用时，后续连接因等待超期收到 `QUEUE_TIMEOUT`。[原始输出](benchmarks/windows-queue-deadline.json) |
+| **同机新旧版本对照** | Windows x64 Release 环境，固定客户端并发，分别测试 `status` 查询和 `start_run` 控制。基线与新版各命令各三轮，**4,200 次请求全部成功**。[配置与原始数据](benchmarks/windows-baseline-comparison.json) |
+
+本轮吞吐中位数未提升。已验证的研发结果是应答缓存有界，以及慢连接占用执行资源时能够拒绝过期任务。
+
+## 上层应用接入
+
+[工业设备诊断与任务编排平台](https://github.com/KristenYue/telecom-network-incident-agent)的 Python Worker 通过 TCP 调用同一个模拟设备。本机联调覆盖**正常运行、急停后拒绝启动、设备离线**。在这条链路中，C++ 服务提供设备状态和联锁响应，上层平台负责保存任务、检索运行手册和记录诊断依据。[查看跨项目原始轨迹](https://github.com/KristenYue/telecom-network-incident-agent/blob/main/docs/device-api-smoke.jsonl)
+
+![设备联调演示](docs/assets/validation-demo.gif)
 
 ---
+
 
 ## 10 秒了解项目
 
