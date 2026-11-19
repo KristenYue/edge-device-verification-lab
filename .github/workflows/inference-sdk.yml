@@ -1,0 +1,47 @@
+name: Native SDK Linux acceptance
+on:
+  workflow_dispatch:
+  push:
+    paths: ['inference_sdk/**', '.github/workflows/inference-sdk.yml']
+  pull_request:
+    paths: ['inference_sdk/**', '.github/workflows/inference-sdk.yml']
+permissions:
+  contents: read
+jobs:
+  native-sdk:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download official CPU SDK
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts vendor
+          curl -fL --retry 3 https://www.nuget.org/api/v2/package/Microsoft.ML.OnnxRuntime/1.22.0 -o vendor/ort.zip
+          unzip -q vendor/ort.zip -d vendor/package
+          mkdir -p vendor/ort/include vendor/ort/lib
+          cp -a vendor/package/build/native/include/. vendor/ort/include/
+          cp -a vendor/package/runtimes/linux-x64/native/. vendor/ort/lib/
+          sha256sum vendor/ort.zip > artifacts/ort-package.sha256
+      - name: Build wheel and verify native reference graph
+        run: |
+          set -euo pipefail
+          python -m pip install numpy onnx onnxruntime scikit-build-core pybind11
+          python -m pip wheel ./inference_sdk --no-build-isolation --no-deps --wheel-dir artifacts --config-settings=cmake.define.ORT_ROOT="$PWD/vendor/ort"
+          python -m pip install artifacts/edge_ai_sdk-*.whl
+          python inference_sdk/examples/verify_session.py --output artifacts/linux-reference.json
+      - name: Verify wheel in clean environment
+        run: |
+          set -euo pipefail
+          python -m venv /tmp/sdk-clean
+          /tmp/sdk-clean/bin/python -m pip install numpy artifacts/edge_ai_sdk-*.whl
+          /tmp/sdk-clean/bin/python inference_sdk/examples/verify_installed_wheel.py --model artifacts/reference.onnx --output artifacts/linux-clean-install.json
+          /tmp/sdk-clean/bin/python -m pip freeze > artifacts/clean-packages.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-sdk-linux-evidence
+          path: artifacts/
