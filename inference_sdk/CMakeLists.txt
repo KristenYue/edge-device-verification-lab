@@ -15,4 +15,6 @@ if(WIN32)
   install(FILES "${ORT_ROOT}/lib/onnxruntime.dll" DESTINATION edge_ai_sdk)
 else()
   install(DIRECTORY "${ORT_ROOT}/lib/" DESTINATION edge_ai_sdk FILES_MATCHING PATTERN "libonnxruntime.so*")
+  # NuGet ships libonnxruntime.so without the SONAME .so.1 alias.
+  install(FILES "${ORT_LIBRARY}" DESTINATION edge_ai_sdk RENAME libonnxruntime.so.1)
 endif()
