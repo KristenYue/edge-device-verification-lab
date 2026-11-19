@@ -1,4 +1,10 @@
 .venv/
+.venv-sdk/
+inference_sdk/vendor/
+inference_sdk/build/
+inference_sdk/models/
+inference_sdk/dist/
+inference_sdk/.venv-clean/
 build/
 dist/
 *.obj
