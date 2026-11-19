@@ -1,168 +1,113 @@
-# C++ Device Runtime & SDK — 设备控制软件与智能应用接口
+# C++ 设备运行时与原生推理 SDK
 
-**按模块阅读：** 设备控制与通信见本页；[C++/Python原生推理SDK](inference_sdk/README.md)提供预训练模型对齐、Wheel干净安装和原始时延结果。
+![项目能力与执行流程](docs/assets/overview.gif)
 
-[![CI](https://github.com/KristenYue/edge-device-verification-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/KristenYue/edge-device-verification-lab/actions/workflows/ci.yml)
-[![C++17](https://img.shields.io/badge/C%2B%2B-17-00599C)](CMakeLists.txt)
-[![Python 3.11-3.12](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB)](pyproject.toml)
+<sub>架构流程示意动画 · [静态版本](docs/assets/overview.png) · 动画不作为实测结果。</sub>
 
-## Project Overview
+[返回技术作品集](https://github.com/KristenYue/KristenYue) · [机器人业务](https://github.com/KristenYue/telecom-network-incident-agent/blob/main/docs/ROBOT_DELIVERY.md) · [原生模型 SDK](https://github.com/KristenYue/edge-device-verification-lab/tree/main/inference_sdk) · [车辆 Agent](https://github.com/KristenYue/telecom-network-incident-agent/blob/main/docs/VEHICLE_ADAPTER.md)
 
-为工业 AI 应用提供可调用的设备软件接口和模拟执行环境。C++17 服务实现设备状态机、安全联锁、TCP 命令协议、并发连接、幂等缓存和结构化事件；Python SDK 负责状态查询、控制请求、超时处理和上层 Agent 接入。
 
-该项目不是以测试脚本为中心的实验仓库。它首先是一个可运行的设备 Runtime：上层应用只能通过公开 TCP 协议观察和控制设备，因而可以被 FastAPI、工业 Agent 或其他研发工具直接复用。
+**C++17 · Python · RAII · TCP · CMake · pybind11 · ONNX Runtime CPU**
 
-## Application Scenarios
+为上层智能应用提供两类可复用软件能力：**设备控制接口**和**跨语言模型执行接口**。前者管理设备状态、并发连接与请求身份；后者把 Python NumPy 输入交给 C++ ONNX Session 执行，并交还独立拥有内存的输出。
 
-| 场景 | 设备软件能力 |
-|---|---|
-| 工业 AI 诊断 | Agent 通过 Python SDK 查询设备状态，将 `E_STOP`、联锁和错误信息作为工具观测 |
-| 研发联调 | 在真实硬件准备完成前验证命令顺序、状态守卫和故障恢复 |
-| 控制接口开发 | 使用稳定 request ID、CRC32 和 JSON Lines 处理 TCP 请求、重试与重复命令 |
-| 服务过载保护 | 有界 Worker、连接队列、`SERVER_BUSY` 和 `QUEUE_TIMEOUT` 防止过期命令进入设备核心 |
+| 您关注的职责 | 优先看什么 | 后续业务 |
+|---|---|---|
+| **AI 芯片应用 / 模型 SDK / C++ Python 接口** | [原生推理 SDK](inference_sdk/README.md)：Tensor 契约、GIL、生命周期、打包、数值对齐 | [真实模型 + 原生检索 + 设备诊断](https://github.com/KristenYue/telecom-network-incident-agent/blob/main/docs/evidence/native-llm-live.json) |
+| **设备软件 / 工业工具链 / 机器人外设接口** | 本页：状态机、Socket RAII、有界并发、幂等缓存和排队期限 | [Agent 设备能力接入](https://github.com/KristenYue/telecom-network-incident-agent) |
 
-## Features & Real Demonstration
-
-### 设备生命周期
+## 架构
 
 ```mermaid
-stateDiagram-v2
-    [*] --> BOOT
-    BOOT --> IDLE: power_on
-    IDLE --> HOMED: home
-    HOMED --> READY: calibrate
-    READY --> COMPLETE: load_profile + start_run
-    COMPLETE --> IDLE: reset
-    IDLE --> E_STOP: interlock_open
-    HOMED --> ERROR: sensor_drift / actuator_stuck
-    ERROR --> HOMED: clear fault + home
-    E_STOP --> IDLE: clear_emergency_stop
+flowchart LR
+    A[Python / Agent 应用] --> C[DeviceClient]
+    C --> T[TCP JSON Lines / CRC32]
+    T --> Q[有界连接队列]
+    Q --> W[固定 Worker Pool]
+    W --> D[设备状态机 / 联锁]
+    D --> I[请求缓存 / 事件日志]
+    A --> N[NumPy Tensor]
+    N --> B[pybind11 参数与内存契约]
+    B --> O[C++ ONNX Runtime Session]
+    O --> E[Python 拥有的输出数组]
 ```
 
-控制协议还维护通信状态 `OFFLINE/ONLINE` 和控制模式 `LOCAL/REMOTE`。远程命令只有在 `ONLINE + REMOTE` 条件下才允许执行。
+## 三个核心工程难点
 
-### 工业 Agent 接入
+| 工程问题 | 实现 | 能证明的开发能力 |
+|---|---|---|
+| **Socket 在异常和线程转交时怎样释放** | move-only RAII，接入线程 → 队列 → Worker 逐次移交所有权；队列满返回 `SERVER_BUSY` | 资源生命周期清晰，异常路径无需手工分散关闭。[服务入口](cpp/src/main.cpp) |
+| **多连接重试怎样避免重复设备动作** | 设备锁覆盖缓存检查、命令执行和响应入账；相同 ID / 指纹命中缓存，不同指纹报冲突；FIFO 容量 1,024 | 将并发检查和执行放入同一一致性边界。[状态与协议](docs/INTERFACE_PROTOCOL.md) |
+| **慢连接与排队请求怎样受控** | 连接队列与 Worker 数有界；从 accept 起记录期限；排队过期先返回 `QUEUE_TIMEOUT`，不进入设备核心 | 资源约束与命令有效期落实在服务层。[队列](cpp/include/edge/bounded_queue.hpp) · [运行时加固](docs/RUNTIME_HARDENING.md) |
 
-[Industrial AI Agent](https://github.com/KristenYue/telecom-network-incident-agent)通过本项目的 `DeviceClient` 调用状态工具。真实模型演示中，C++ Runtime 返回 `E_STOP` 和联锁字段，LLM 随后选择 Runbook 工具并生成诊断建议。
+## 设备业务：可调用的控制运行时
+
+正常流程为 `power_on → home → calibrate → load_profile → start_run`。通信状态 `ONLINE` 与控制模式 `REMOTE` 是远程命令前提；安全联锁触发后返回 `E_STOP`，控制层拒绝启动。
 
 ```python
 from edge_validation.client import DeviceClient
-
 device = DeviceClient(port=18765, timeout=1)
 snapshot = device.status()
 print(snapshot.state, snapshot.data)
 ```
 
-### 4,200 次控制/查询对照
+[工业 Agent](https://github.com/KristenYue/telecom-network-incident-agent)通过这一公共接口读取设备观测，然后检索知识生成解释。模型不拥有绕过设备联锁的接口。
 
-Windows 11、MSVC 14.43 x64 Release，4 个 Worker、32 个队列槽。基线和当前版分别对 `status`、`start_run` 运行三轮，每轮 350 个请求，共 **4,200 次测量请求全部成功**。
+## 可量化结果
+
+| 实验 | 结果 | 环境与证据 |
+|---|---|---|
+| 设备请求对照 | **4,200 / 4,200 成功** | Windows 11 / MSVC x64 Release，4 Worker、32 队列槽，status / start_run 各 3 轮、每轮 350 次。[原始数据](benchmarks/windows-baseline-comparison.json) |
+| 排队期限 | 单 Worker 被半帧连接占用时，下一连接超过配置 100 ms 期限后返回 **QUEUE_TIMEOUT** | 期限配置为 100 ms，不表示精确 100 ms 响应 SLA。[原始响应](benchmarks/windows-queue-deadline.json) |
+| 预训练模型对齐 | BGE `3×512` 输出最大绝对误差 **1.53×10⁻⁷** | Windows CPU，单线程，原生 ORT 1.22 / Python ORT 1.32。[原始结果](inference_sdk/benchmarks/windows-bge.json) |
+| SDK 交付 | Windows 与 Ubuntu 构建 Wheel、参考图对齐、干净环境安装执行通过 | [Windows 记录](inference_sdk/benchmarks/windows-clean-install.json) · [Ubuntu CI](https://github.com/KristenYue/edge-device-verification-lab/actions/runs/44506857643) |
+
+### 性能对照的完整结论
 
 | 命令 | 基线吞吐中位数 | 当前吞吐中位数 | 基线 / 当前 P95 中位数 |
 |---|---:|---:|---:|
-| `status` | 1522.0/s | 1256.8/s | 13.79 / 15.04 ms |
+| `status` | 1,522.0/s | 1,256.8/s | 13.79 / 15.04 ms |
 | `start_run` | 986.9/s | 950.2/s | 15.54 / 15.95 ms |
 
-**本轮吞吐量没有提升。** 已验证收益是请求缓存和设备事件常驻数据有界，以及慢连接场景可以在命令进入设备核心前返回 `QUEUE_TIMEOUT`。[原始对照数据](benchmarks/windows-baseline-comparison.json)
+本轮吞吐量未提升。研发成果是**常驻缓存与连接资源有界、异常请求提前终止、请求身份和设备动作一致性明确**。性能数字来自本机回环短连接；与硬件执行机构耗时分开。
 
-## System Architecture
+## 原生推理 SDK：接口而非模型调用脚本
 
-```mermaid
-flowchart LR
-    A[AI Agent / Python Application] --> P[Python Device SDK]
-    P -->|TCP JSON Lines\nrequest_id + CRC32| S[C++17 TCP Service]
-    S --> Q[Bounded Connection Queue\nqueue deadline]
-    Q --> W[Worker Pool]
-    W --> D[Device Runtime\nstate machine · interlock]
-    D --> C[Bounded Idempotency Cache]
-    D --> E[Structured Event Log]
-    D --> P
-```
+Python Tokenizer → `float32 / int64` 连续 NumPy → C++ Session → Python 自有输出。Session 独立管理 Env / Options；输入在 Run 期间保留所有者引用；只在原生 Run 释放 GIL；ORT 异常映射为 Python 异常。详见 [SDK 完整说明](inference_sdk/README.md)。
 
-Socket 所有权使用 move-only RAII 从接入线程转交队列和 Worker。设备共享锁覆盖缓存查询、命令执行和响应入账，避免并发检查与执行之间产生重复动作窗口。
+## 运行方法
 
-## Core Implementation
-
-| 模块 | 实现 |
-|---|---|
-| Device Runtime | C++17 状态机、状态守卫、安全联锁、配置与运行计数 |
-| TCP Protocol | JSON Lines、64 KiB 帧上限、CRC32、稳定 request ID、半包/粘包处理 |
-| Concurrent Service | 可配置 Worker Pool、有界连接队列、Socket RAII、`SERVER_BUSY` |
-| Queue Deadline | 从 accept 时开始计时，过期返回 `QUEUE_TIMEOUT`，不执行设备命令 |
-| Idempotency Cache | 1024 条 FIFO 请求指纹与响应；命中不延长保留时间 |
-| Fault Model | `interlock_open`、`actuator_stuck`、`sensor_drift`、`response_delay` |
-| Python SDK | Pydantic 响应契约、超时分类、稳定 ID 重试、状态与控制接口 |
-| Diagnostics | JSONL 事件、重复序列检查和运行报告 |
-
-## Engineering Results
-
-- 正常完成 `power_on → home → calibrate → load_profile → start_run`。
-- 联锁触发后设备进入 `E_STOP`，控制层拒绝启动。
-- 相同 request ID 与相同指纹返回缓存结果；相同 ID 不同命令返回冲突。
-- 半帧占用单 Worker 时，排队超过 100 ms 的下一连接实测返回 [`QUEUE_TIMEOUT`](benchmarks/windows-queue-deadline.json)。
-- 缓存、事件批次和连接队列均设置明确上界；进程重启或 FIFO 驱逐后的幂等边界在文档中公开。
-- Windows/Linux CI 构建 C++ Runtime 并运行 Python SDK 集成路径；Linux 支持 ASan/UBSan 构建。
-
-## Industry Applications
-
-- **半导体与 AI 芯片：** 设备控制模拟、联锁诊断、研发上位机和 AI 工具接口。
-- **智能汽车：** 智能终端状态机、受控命令接口、重试与重复请求处理。
-- **具身智能：** 机器人外设/工作站状态查询、技能前置条件和安全状态反馈。
-
-当前实现是通用仿真设备，不是半导体设备固件、车辆 ECU 或机器人控制器的真实部署。
-
-## Quick Start
-
-### Windows
+Windows：
 
 ```powershell
 .\scripts\build_windows.ps1
-py -3.12 -m venv .venv
+python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e ".[dev]"
 $env:EDGE_SIMULATOR_BIN = "$PWD\build\edge_device_simulator.exe"
 .\.venv\Scripts\python.exe scripts\run_demo.py
 ```
 
-直接启动服务：
-
-```powershell
-.\build\edge_device_simulator.exe --port 18765 --workers 4 --queue-capacity 32
-```
-
-### Linux
+Linux：
 
 ```bash
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cmake --build build
 ctest --test-dir build --output-on-failure
-python -m venv .venv
-.venv/bin/python -m pip install -e '.[dev]'
-EDGE_SIMULATOR_BIN="$PWD/build/edge_device_simulator" .venv/bin/python scripts/run_demo.py
+python -m pip install -e '.[dev]'
+EDGE_SIMULATOR_BIN="$PWD/build/edge_device_simulator" python scripts/run_demo.py
 ```
 
-## Evidence & Source Code
+[SDK 构建、模型导出与对齐](inference_sdk/README.md) · [Ubuntu 原生 SDK 流程](.github/workflows/inference-sdk.yml)
 
-| 内容 | 入口 |
-|---|---|
-| C++ TCP 服务 | [main.cpp](cpp/src/main.cpp) |
-| 设备状态机 | [state_machine.hpp](cpp/include/edge/state_machine.hpp) |
-| 有界连接队列 | [bounded_queue.hpp](cpp/include/edge/bounded_queue.hpp) |
-| Python SDK | [src/edge_validation](src/edge_validation) |
-| 协议说明 | [INTERFACE_PROTOCOL.md](docs/INTERFACE_PROTOCOL.md) |
-| 运行时加固与 4,200 次对照 | [RUNTIME_HARDENING.md](docs/RUNTIME_HARDENING.md) |
-| 原始基准 | [benchmarks](benchmarks) |
-| Industrial AI Agent | [业务接入仓库](https://github.com/KristenYue/telecom-network-incident-agent) |
+## 源码与工程复盘
 
-## Validation & Limitations
+[设备状态机](cpp/include/edge/state_machine.hpp) · [Python SDK](src/edge_validation) · [协议](docs/INTERFACE_PROTOCOL.md) · [工程加固](docs/RUNTIME_HARDENING.md) · [基准原始数据](benchmarks)
 
-- 4,200 次结果来自 Windows 本机回环短连接，不代表生产网络吞吐；本轮吞吐量未提升。
-- `start_run` 基准模拟状态机与事件写盘，不等待真实执行机构。
-- 1024 条 FIFO 缓存被驱逐或进程重启后，同一 ID 可能重新执行；调用方遇到未知结果应先查询状态。
-- 设备互斥锁保证单实例内的检查与执行一致性，也使设备操作串行化。
-- 日志当前同步写入，文件轮转由部署侧负责；短测资源快照不能证明长期内存趋势。
-- 当前为软件模拟器，没有真实硬件时序、电气噪声、现场总线或功能安全认证。
+**Bad Case：** 相同 ID 换载荷、重复请求并发到达、连接半帧占用、缓存驱逐、队列过期。缓存是进程内有界 FIFO，重启或驱逐后不保证历史请求去重；未知控制结果应先查询状态。这些边界影响上层恢复策略。
 
-详细验证数量、覆盖率、需求追踪和故障注入见 [Release Qualification](docs/RELEASE_QUALIFICATION_REPORT.md)、[Test Plan](docs/TEST_PLAN.md) 与 [Known Limitations](docs/KNOWN_LIMITATIONS.md)。
+当前设备为通用软件仿真，推理为 ONNX CPU 执行；分别提供可复现的控制接口和模型 SDK 证据。
 
-## License
 
-[MIT](LICENSE)
+---
+
+文档与结果口径：2026-11-19。功能以对应源码和运行记录为准；场景、执行环境和数据来源随结果一并标注。
