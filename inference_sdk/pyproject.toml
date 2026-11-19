@@ -1,0 +1,18 @@
+[build-system]
+requires = ["scikit-build-core>=0.10", "pybind11>=2.13"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "edge-ai-sdk"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = ["numpy>=1.26"]
+description = "C++ ONNX Runtime CPU session with checked NumPy bindings"
+
+[project.optional-dependencies]
+embedding = ["transformers>=4.40,<5"]
+validation = ["onnx>=1.17", "onnxruntime>=1.22"]
+
+[tool.scikit-build]
+wheel.packages = ["python/edge_ai_sdk"]
+cmake.build-type = "Release"

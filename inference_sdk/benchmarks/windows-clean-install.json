@@ -1,0 +1,8 @@
+{
+  "platform": "Windows-11-10.0.26200-SP0",
+  "package_location_kind": "site-packages",
+  "max_abs_error": 0.0,
+  "model_sha256": "2666a13eb9bd39e33653e39832c50cce5f98fd6c827ef434d01c1d397b556d14",
+  "numpy_version": "2.5.5",
+  "requires_python_ort": false
+}

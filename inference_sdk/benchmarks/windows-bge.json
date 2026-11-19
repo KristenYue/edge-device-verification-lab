@@ -1,0 +1,31 @@
+{
+  "platform": "Windows-11-10.0.26200-SP0",
+  "model": "BAAI/bge-small-zh-v1.5",
+  "model_sha256": "1005e14a3a75167ac4082f3e0e31a8c060a5c9f5941b2af82232b276783357c5",
+  "input_shape": [
+    3,
+    15
+  ],
+  "output_shape": [
+    3,
+    512
+  ],
+  "max_abs_error": 1.5273690223693848e-07,
+  "latency": {
+    "native": {
+      "p50_ms": 13.3316,
+      "p95_ms": 14.858404999999998
+    },
+    "python_ort": {
+      "p50_ms": 12.6901,
+      "p95_ms": 14.15486
+    }
+  },
+  "warmup": 5,
+  "runs": 30,
+  "threads": 1,
+  "includes_tokenization": false,
+  "provider": "CPUExecutionProvider",
+  "python_ort_version": "1.32.0",
+  "native_ort_version": "1.22.0"
+}

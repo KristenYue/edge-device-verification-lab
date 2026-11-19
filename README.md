@@ -1,5 +1,7 @@
 # C++ Device Runtime & SDK — 设备控制软件与智能应用接口
 
+**按模块阅读：** 设备控制与通信见本页；[C++/Python原生推理SDK](inference_sdk/README.md)提供预训练模型对齐、Wheel干净安装和原始时延结果。
+
 [![CI](https://github.com/KristenYue/edge-device-verification-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/KristenYue/edge-device-verification-lab/actions/workflows/ci.yml)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-00599C)](CMakeLists.txt)
 [![Python 3.11-3.12](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB)](pyproject.toml)
