@@ -1,0 +1,2 @@
+edge-ai-sdk @ file:///home/runner/work/edge-device-verification-lab/edge-device-verification-lab/artifacts/edge_ai_sdk-0.1.0-cp312-cp312-linux_x86_64.whl#sha256=54499f1a9850c81f110fd3e2f05834395f26674a304257ea1d2705b117ee9f3f
+numpy==2.5.5

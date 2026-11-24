@@ -1,5 +1,21 @@
 # Project Status
 
+## 2026-11-24 native inference SDK milestone
+
+The device runtime status below remains unchanged. A separate `inference_sdk/` vertical slice now has local Windows evidence for:
+
+- C++17/pybind11/ONNX Runtime CPU Wheel build and installation;
+- dynamic-shape multi-input/multi-output contracts and common numeric output dtypes;
+- explicit input/output ownership, GIL release around native execution, and ORT exception mapping;
+- bounded asynchronous requests with copied inputs, cancellation, queue rejection and deadline semantics;
+- request-level queue/execution traces plus native input-binding/ORT-run/output-copy phase traces;
+- real BGE and MobileNetV2 cross-workload benchmarks with Python ORT numerical comparison;
+- BGE dynamic-INT8 experiment preserving both performance gains and retrieval-smoke quality regression.
+
+Local acceptance: SDK Wheel `0.2.0` builds and installs, three SDK tests pass, and the existing C++ core CTest passes. The updated Ubuntu SDK workflow is configured but must not be described as passed until its corresponding GitHub Actions run succeeds.
+
+Still deferred: CUDA/NPU providers, static quantization with representative calibration data, physical edge hardware, and native C++ scheduling. Dynamic INT8 is framework-provided ONNX Runtime quantization, not a custom quantizer or kernel.
+
 Status as of 2026-11-13: **domain-neutral refactor complete and cross-platform qualified**.
 
 ## Completed

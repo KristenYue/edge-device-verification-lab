@@ -1,0 +1,1214 @@
+{
+  "schema_version": 1,
+  "experiment": "native_sdk_cross_workload_matrix",
+  "provider": "CPUExecutionProvider",
+  "threads": {
+    "intra_op": 1,
+    "inter_op": 1
+  },
+  "timing_scope": "model execution only; excludes tokenization and input generation",
+  "workloads": [
+    {
+      "workload": "bge",
+      "model_file": "bge-small-zh.onnx",
+      "model_sha256": "1005e14a3a75167ac4082f3e0e31a8c060a5c9f5941b2af82232b276783357c5",
+      "model_bytes": 94861055,
+      "batch": 1,
+      "runs": 30,
+      "warmup": 5,
+      "native_latency_ms": {
+        "p50": 11.6552,
+        "p95": 14.406554999999999,
+        "p99": 14.849292
+      },
+      "python_ort_latency_ms": {
+        "p50": 11.357600000000001,
+        "p95": 14.071314999999997,
+        "p99": 14.781634
+      },
+      "python_ort_version": "1.32.0",
+      "native_throughput_items_per_second": 85.79861349440593,
+      "native_phase_us": {
+        "input_binding": {
+          "p50": 22.15,
+          "p95": 45.355,
+          "p99": 49.80200000000001
+        },
+        "ort_run": {
+          "p50": 11580.099999999999,
+          "p95": 14318.114999999998,
+          "p99": 14750.895
+        },
+        "output_copy": {
+          "p50": 18.15,
+          "p95": 37.695,
+          "p99": 38.739000000000004
+        },
+        "total": {
+          "p50": 11626.55,
+          "p95": 14374.519999999999,
+          "p99": 14812.04
+        }
+      },
+      "outputs": {
+        "embeddings": {
+          "max_abs_error": 1.2293457984924316e-07,
+          "mean_abs_error": 3.1423439850186696e-08,
+          "allclose": true,
+          "shape": [
+            1,
+            512
+          ],
+          "dtype": "float32"
+        }
+      },
+      "model_info": {
+        "inputs": [
+          {
+            "name": "input_ids",
+            "shape": [
+              -1,
+              -1
+            ],
+            "onnx_dtype": 7
+          },
+          {
+            "name": "attention_mask",
+            "shape": [
+              -1,
+              -1
+            ],
+            "onnx_dtype": 7
+          },
+          {
+            "name": "token_type_ids",
+            "shape": [
+              -1,
+              -1
+            ],
+            "onnx_dtype": 7
+          }
+        ],
+        "outputs": [
+          {
+            "name": "embeddings",
+            "shape": [
+              -1,
+              512
+            ],
+            "onnx_dtype": 1
+          }
+        ],
+        "provider": "CPUExecutionProvider",
+        "onnxruntime_version": "1.22.0"
+      },
+      "trial_count": 3,
+      "trials": [
+        {
+          "native_latency_ms": {
+            "p50": 11.9916,
+            "p95": 14.406554999999999,
+            "p99": 14.849292
+          },
+          "python_ort_latency_ms": {
+            "p50": 11.437349999999999,
+            "p95": 13.341305,
+            "p99": 14.316286000000002
+          },
+          "native_throughput_items_per_second": 83.39170752860336,
+          "native_phase_us": {
+            "input_binding": {
+              "p50": 23.75,
+              "p95": 45.355,
+              "p99": 49.80200000000001
+            },
+            "ort_run": {
+              "p50": 11913.150000000001,
+              "p95": 14318.114999999998,
+              "p99": 14750.895
+            },
+            "output_copy": {
+              "p50": 18.200000000000003,
+              "p95": 41.124999999999986,
+              "p99": 44.097
+            },
+            "total": {
+              "p50": 11963.3,
+              "p95": 14374.519999999999,
+              "p99": 14812.04
+            }
+          }
+        },
+        {
+          "native_latency_ms": {
+            "p50": 11.6552,
+            "p95": 13.959779999999999,
+            "p99": 14.72943
+          },
+          "python_ort_latency_ms": {
+            "p50": 11.357600000000001,
+            "p95": 14.071314999999997,
+            "p99": 15.587315
+          },
+          "native_throughput_items_per_second": 85.79861349440593,
+          "native_phase_us": {
+            "input_binding": {
+              "p50": 22.0,
+              "p95": 42.655,
+              "p99": 43.836
+            },
+            "ort_run": {
+              "p50": 11580.099999999999,
+              "p95": 13877.459999999997,
+              "p99": 14637.234
+            },
+            "output_copy": {
+              "p50": 18.049999999999997,
+              "p95": 32.87999999999999,
+              "p99": 36.488
+            },
+            "total": {
+              "p50": 11626.55,
+              "p95": 13929.019999999997,
+              "p99": 14695.34
+            }
+          }
+        },
+        {
+          "native_latency_ms": {
+            "p50": 11.3398,
+            "p95": 14.519139999999998,
+            "p99": 15.031396
+          },
+          "python_ort_latency_ms": {
+            "p50": 10.8945,
+            "p95": 14.606505,
+            "p99": 14.781634
+          },
+          "native_throughput_items_per_second": 88.18497680735109,
+          "native_phase_us": {
+            "input_binding": {
+              "p50": 22.15,
+              "p95": 46.455,
+              "p99": 56.22700000000001
+            },
+            "ort_run": {
+              "p50": 11278.2,
+              "p95": 14399.829999999998,
+              "p99": 14862.946
+            },
+            "output_copy": {
+              "p50": 18.15,
+              "p95": 37.695,
+              "p99": 38.739000000000004
+            },
+            "total": {
+              "p50": 11316.1,
+              "p95": 14475.599999999997,
+              "p99": 14956.866
+            }
+          }
+        }
+      ]
+    },
+    {
+      "workload": "bge",
+      "model_file": "bge-small-zh.onnx",
+      "model_sha256": "1005e14a3a75167ac4082f3e0e31a8c060a5c9f5941b2af82232b276783357c5",
+      "model_bytes": 94861055,
+      "batch": 4,
+      "runs": 30,
+      "warmup": 5,
+      "native_latency_ms": {
+        "p50": 43.08565,
+        "p95": 47.08914,
+        "p99": 47.555024
+      },
+      "python_ort_latency_ms": {
+        "p50": 42.0189,
+        "p95": 46.32983,
+        "p99": 47.475037
+      },
+      "python_ort_version": "1.32.0",
+      "native_throughput_items_per_second": 92.83833480520777,
+      "native_phase_us": {
+        "input_binding": {
+          "p50": 22.5,
+          "p95": 46.589999999999996,
+          "p99": 54.033
+        },
+        "ort_run": {
+          "p50": 43000.45,
+          "p95": 46973.479999999996,
+          "p99": 47468.848
+        },
+        "output_copy": {
+          "p50": 19.6,
+          "p95": 38.265,
+          "p99": 115.85500000000006
+        },
+        "total": {
+          "p50": 43052.0,
+          "p95": 47043.24999999999,
+          "p99": 47521.955
+        }
+      },
+      "outputs": {
+        "embeddings": {
+          "max_abs_error": 1.7881393432617188e-07,
+          "mean_abs_error": 3.180716490192026e-08,
+          "allclose": true,
+          "shape": [
+            4,
+            512
+          ],
+          "dtype": "float32"
+        }
+      },
+      "model_info": {
+        "inputs": [
+          {
+            "name": "input_ids",
+            "shape": [
+              -1,
+              -1
+            ],
+            "onnx_dtype": 7
+          },
+          {
+            "name": "attention_mask",
+            "shape": [
+              -1,
+              -1
+            ],
+            "onnx_dtype": 7
+          },
+          {
+            "name": "token_type_ids",
+            "shape": [
+              -1,
+              -1
+            ],
+            "onnx_dtype": 7
+          }
+        ],
+        "outputs": [
+          {
+            "name": "embeddings",
+            "shape": [
+              -1,
+              512
+            ],
+            "onnx_dtype": 1
+          }
+        ],
+        "provider": "CPUExecutionProvider",
+        "onnxruntime_version": "1.22.0"
+      },
+      "trial_count": 3,
+      "trials": [
+        {
+          "native_latency_ms": {
+            "p50": 43.08565,
+            "p95": 47.044185,
+            "p99": 47.502673
+          },
+          "python_ort_latency_ms": {
+            "p50": 40.840450000000004,
+            "p95": 45.37709,
+            "p99": 46.711553
+          },
+          "native_throughput_items_per_second": 92.83833480520777,
+          "native_phase_us": {
+            "input_binding": {
+              "p50": 21.9,
+              "p95": 44.165,
+              "p99": 44.726
+            },
+            "ort_run": {
+              "p50": 43000.45,
+              "p95": 46933.104999999996,
+              "p99": 47380.564999999995
+            },
+            "output_copy": {
+              "p50": 18.6,
+              "p95": 36.775,
+              "p99": 133.27600000000012
+            },
+            "total": {
+              "p50": 43052.0,
+              "p95": 47000.31999999999,
+              "p99": 47453.895
+            }
+          }
+        },
+        {
+          "native_latency_ms": {
+            "p50": 43.48805,
+            "p95": 47.217135,
+            "p99": 47.555024
+          },
+          "python_ort_latency_ms": {
+            "p50": 42.912850000000006,
+            "p95": 46.32983,
+            "p99": 47.475037
+          },
+          "native_throughput_items_per_second": 91.97929086266227,
+          "native_phase_us": {
+            "input_binding": {
+              "p50": 22.5,
+              "p95": 49.56499999999998,
+              "p99": 54.033
+            },
+            "ort_run": {
+              "p50": 43419.45,
+              "p95": 47085.595,
+              "p99": 47468.848
+            },
+            "output_copy": {
+              "p50": 19.75,
+              "p95": 49.60999999999994,
+              "p99": 115.85500000000006
+            },
+            "total": {
+              "p50": 43462.0,
+              "p95": 47166.03,
+              "p99": 47521.955
+            }
+          }
+        },
+        {
+          "native_latency_ms": {
+            "p50": 42.352000000000004,
+            "p95": 47.08914,
+            "p99": 47.626199
+          },
+          "python_ort_latency_ms": {
+            "p50": 42.0189,
+            "p95": 46.90042499999999,
+            "p99": 47.930037999999996
+          },
+          "native_throughput_items_per_second": 94.4465432565168,
+          "native_phase_us": {
+            "input_binding": {
+              "p50": 22.8,
+              "p95": 46.589999999999996,
+              "p99": 54.99700000000001
+            },
+            "ort_run": {
+              "p50": 42267.25,
+              "p95": 46973.479999999996,
+              "p99": 47509.845
+            },
+            "output_copy": {
+              "p50": 19.6,
+              "p95": 38.265,
+              "p99": 43.441
+            },
+            "total": {
+              "p50": 42321.2,
+              "p95": 47043.24999999999,
+              "p99": 47580.820999999996
+            }
+          }
+        }
+      ]
+    },
+    {
+      "workload": "bge",
+      "model_file": "bge-small-zh.onnx",
+      "model_sha256": "1005e14a3a75167ac4082f3e0e31a8c060a5c9f5941b2af82232b276783357c5",
+      "model_bytes": 94861055,
+      "batch": 12,
+      "runs": 30,
+      "warmup": 5,
+      "native_latency_ms": {
+        "p50": 125.5167,
+        "p95": 132.12704,
+        "p99": 133.132816
+      },
+      "python_ort_latency_ms": {
+        "p50": 123.48805,
+        "p95": 129.08416,
+        "p99": 129.62453499999998
+      },
+      "python_ort_version": "1.32.0",
+      "native_throughput_items_per_second": 95.6048079657926,
+      "native_phase_us": {
+        "input_binding": {
+          "p50": 23.9,
+          "p95": 48.12499999999999,
+          "p99": 62.40700000000002
+        },
+        "ort_run": {
+          "p50": 125430.1,
+          "p95": 132042.685,
+          "p99": 133042.37
+        },
+        "output_copy": {
+          "p50": 21.950000000000003,
+          "p95": 45.779999999999994,
+          "p99": 46.571
+        },
+        "total": {
+          "p50": 125481.9,
+          "p95": 132095.69999999998,
+          "p99": 133100.575
+        }
+      },
+      "outputs": {
+        "embeddings": {
+          "max_abs_error": 2.2351741790771484e-07,
+          "mean_abs_error": 3.573703466486222e-08,
+          "allclose": true,
+          "shape": [
+            12,
+            512
+          ],
+          "dtype": "float32"
+        }
+      },
+      "model_info": {
+        "inputs": [
+          {
+            "name": "input_ids",
+            "shape": [
+              -1,
+              -1
+            ],
+            "onnx_dtype": 7
+          },
+          {
+            "name": "attention_mask",
+            "shape": [
+              -1,
+              -1
+            ],
+            "onnx_dtype": 7
+          },
+          {
+            "name": "token_type_ids",
+            "shape": [
+              -1,
+              -1
+            ],
+            "onnx_dtype": 7
+          }
+        ],
+        "outputs": [
+          {
+            "name": "embeddings",
+            "shape": [
+              -1,
+              512
+            ],
+            "onnx_dtype": 1
+          }
+        ],
+        "provider": "CPUExecutionProvider",
+        "onnxruntime_version": "1.22.0"
+      },
+      "trial_count": 3,
+      "trials": [
+        {
+          "native_latency_ms": {
+            "p50": 126.5284,
+            "p95": 132.12704,
+            "p99": 133.132816
+          },
+          "python_ort_latency_ms": {
+            "p50": 123.48805,
+            "p95": 130.134585,
+            "p99": 130.29113999999998
+          },
+          "native_throughput_items_per_second": 94.84036785417345,
+          "native_phase_us": {
+            "input_binding": {
+              "p50": 25.75,
+              "p95": 55.53999999999998,
+              "p99": 59.784
+            },
+            "ort_run": {
+              "p50": 126428.29999999999,
+              "p95": 132042.685,
+              "p99": 133042.37
+            },
+            "output_copy": {
+              "p50": 21.35,
+              "p95": 40.72,
+              "p99": 41.326
+            },
+            "total": {
+              "p50": 126493.6,
+              "p95": 132095.69999999998,
+              "p99": 133100.575
+            }
+          }
+        },
+        {
+          "native_latency_ms": {
+            "p50": 123.92904999999999,
+            "p95": 131.003255,
+            "p99": 131.209589
+          },
+          "python_ort_latency_ms": {
+            "p50": 123.24835,
+            "p95": 127.77241,
+            "p99": 127.985208
+          },
+          "native_throughput_items_per_second": 96.82959725746305,
+          "native_phase_us": {
+            "input_binding": {
+              "p50": 23.9,
+              "p95": 48.12499999999999,
+              "p99": 234.93900000000025
+            },
+            "ort_run": {
+              "p50": 123842.9,
+              "p95": 130889.205,
+              "p99": 131104.547
+            },
+            "output_copy": {
+              "p50": 23.0,
+              "p95": 45.779999999999994,
+              "p99": 46.571
+            },
+            "total": {
+              "p50": 123897.4,
+              "p95": 130960.19,
+              "p99": 131171.165
+            }
+          }
+        },
+        {
+          "native_latency_ms": {
+            "p50": 125.5167,
+            "p95": 132.86517,
+            "p99": 134.574022
+          },
+          "python_ort_latency_ms": {
+            "p50": 123.55185,
+            "p95": 129.08416,
+            "p99": 129.62453499999998
+          },
+          "native_throughput_items_per_second": 95.6048079657926,
+          "native_phase_us": {
+            "input_binding": {
+              "p50": 23.1,
+              "p95": 45.87499999999999,
+              "p99": 62.40700000000002
+            },
+            "ort_run": {
+              "p50": 125430.1,
+              "p95": 132732.095,
+              "p99": 134464.081
+            },
+            "output_copy": {
+              "p50": 21.950000000000003,
+              "p95": 52.56499999999999,
+              "p99": 71.49200000000002
+            },
+            "total": {
+              "p50": 125481.9,
+              "p95": 132814.245,
+              "p99": 134534.114
+            }
+          }
+        }
+      ]
+    },
+    {
+      "workload": "mobilenet",
+      "model_file": "mobilenetv2-12.onnx",
+      "model_sha256": "c0c3f76d93fa3fd6580652a45618618a220fced18babf65774ed169de0432ad5",
+      "model_bytes": 13964571,
+      "batch": 1,
+      "runs": 30,
+      "warmup": 5,
+      "native_latency_ms": {
+        "p50": 6.03315,
+        "p95": 7.420464999999999,
+        "p99": 7.615837
+      },
+      "python_ort_latency_ms": {
+        "p50": 6.5563,
+        "p95": 8.053085,
+        "p99": 8.159049
+      },
+      "python_ort_version": "1.32.0",
+      "native_throughput_items_per_second": 165.75089298293594,
+      "native_phase_us": {
+        "input_binding": {
+          "p50": 18.7,
+          "p95": 35.085,
+          "p99": 35.471
+        },
+        "ort_run": {
+          "p50": 5960.2,
+          "p95": 7282.37,
+          "p99": 7469.323
+        },
+        "output_copy": {
+          "p50": 19.15,
+          "p95": 37.72,
+          "p99": 44.778
+        },
+        "total": {
+          "p50": 6004.0,
+          "p95": 7362.714999999999,
+          "p99": 7552.92
+        }
+      },
+      "outputs": {
+        "output": {
+          "max_abs_error": 0.0,
+          "mean_abs_error": 0.0,
+          "allclose": true,
+          "shape": [
+            1,
+            1000
+          ],
+          "dtype": "float32"
+        }
+      },
+      "model_info": {
+        "inputs": [
+          {
+            "name": "input",
+            "shape": [
+              -1,
+              3,
+              224,
+              224
+            ],
+            "onnx_dtype": 1
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output",
+            "shape": [
+              -1,
+              1000
+            ],
+            "onnx_dtype": 1
+          }
+        ],
+        "provider": "CPUExecutionProvider",
+        "onnxruntime_version": "1.22.0"
+      },
+      "trial_count": 3,
+      "trials": [
+        {
+          "native_latency_ms": {
+            "p50": 6.03315,
+            "p95": 7.626304999999999,
+            "p99": 8.151666
+          },
+          "python_ort_latency_ms": {
+            "p50": 6.5563,
+            "p95": 8.053085,
+            "p99": 8.159049
+          },
+          "native_throughput_items_per_second": 165.75089298293594,
+          "native_phase_us": {
+            "input_binding": {
+              "p50": 18.55,
+              "p95": 35.085,
+              "p99": 35.471
+            },
+            "ort_run": {
+              "p50": 5960.2,
+              "p95": 7523.569999999999,
+              "p99": 8046.819
+            },
+            "output_copy": {
+              "p50": 18.25,
+              "p95": 39.98999999999998,
+              "p99": 44.778
+            },
+            "total": {
+              "p50": 6004.0,
+              "p95": 7579.309999999999,
+              "p99": 8105.423000000001
+            }
+          }
+        },
+        {
+          "native_latency_ms": {
+            "p50": 6.6432,
+            "p95": 7.420464999999999,
+            "p99": 7.615837
+          },
+          "python_ort_latency_ms": {
+            "p50": 6.7059,
+            "p95": 8.558454999999999,
+            "p99": 8.882666
+          },
+          "native_throughput_items_per_second": 150.52986512524083,
+          "native_phase_us": {
+            "input_binding": {
+              "p50": 22.15,
+              "p95": 35.985,
+              "p99": 41.057
+            },
+            "ort_run": {
+              "p50": 6561.799999999999,
+              "p95": 7282.37,
+              "p99": 7469.323
+            },
+            "output_copy": {
+              "p50": 20.6,
+              "p95": 37.72,
+              "p99": 49.26000000000001
+            },
+            "total": {
+              "p50": 6607.95,
+              "p95": 7362.714999999999,
+              "p99": 7552.92
+            }
+          }
+        },
+        {
+          "native_latency_ms": {
+            "p50": 5.641,
+            "p95": 6.606495,
+            "p99": 7.492441000000001
+          },
+          "python_ort_latency_ms": {
+            "p50": 6.1229499999999994,
+            "p95": 7.064634999999999,
+            "p99": 8.110752000000002
+          },
+          "native_throughput_items_per_second": 177.27353306151392,
+          "native_phase_us": {
+            "input_binding": {
+              "p50": 18.7,
+              "p95": 23.454999999999995,
+              "p99": 30.364000000000004
+            },
+            "ort_run": {
+              "p50": 5588.8,
+              "p95": 6531.37,
+              "p99": 7402.0610000000015
+            },
+            "output_copy": {
+              "p50": 19.15,
+              "p95": 33.684999999999974,
+              "p99": 38.571
+            },
+            "total": {
+              "p50": 5620.6,
+              "p95": 6576.865,
+              "p99": 7454.633000000001
+            }
+          }
+        }
+      ]
+    },
+    {
+      "workload": "mobilenet",
+      "model_file": "mobilenetv2-12.onnx",
+      "model_sha256": "c0c3f76d93fa3fd6580652a45618618a220fced18babf65774ed169de0432ad5",
+      "model_bytes": 13964571,
+      "batch": 4,
+      "runs": 30,
+      "warmup": 5,
+      "native_latency_ms": {
+        "p50": 24.5497,
+        "p95": 28.592254999999998,
+        "p99": 29.393599000000002
+      },
+      "python_ort_latency_ms": {
+        "p50": 25.950400000000002,
+        "p95": 31.3891,
+        "p99": 32.106713000000006
+      },
+      "python_ort_version": "1.32.0",
+      "native_throughput_items_per_second": 162.93478128042298,
+      "native_phase_us": {
+        "input_binding": {
+          "p50": 20.25,
+          "p95": 36.12,
+          "p99": 39.379000000000005
+        },
+        "ort_run": {
+          "p50": 24458.9,
+          "p95": 28468.609999999997,
+          "p99": 29268.961
+        },
+        "output_copy": {
+          "p50": 23.85,
+          "p95": 44.834999999999994,
+          "p99": 50.618
+        },
+        "total": {
+          "p50": 24515.4,
+          "p95": 28545.504999999997,
+          "p99": 29344.72
+        }
+      },
+      "outputs": {
+        "output": {
+          "max_abs_error": 0.0,
+          "mean_abs_error": 0.0,
+          "allclose": true,
+          "shape": [
+            4,
+            1000
+          ],
+          "dtype": "float32"
+        }
+      },
+      "model_info": {
+        "inputs": [
+          {
+            "name": "input",
+            "shape": [
+              -1,
+              3,
+              224,
+              224
+            ],
+            "onnx_dtype": 1
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output",
+            "shape": [
+              -1,
+              1000
+            ],
+            "onnx_dtype": 1
+          }
+        ],
+        "provider": "CPUExecutionProvider",
+        "onnxruntime_version": "1.22.0"
+      },
+      "trial_count": 3,
+      "trials": [
+        {
+          "native_latency_ms": {
+            "p50": 25.35335,
+            "p95": 29.433365,
+            "p99": 30.516698
+          },
+          "python_ort_latency_ms": {
+            "p50": 27.11055,
+            "p95": 31.3891,
+            "p99": 31.885742
+          },
+          "native_throughput_items_per_second": 157.77007772148454,
+          "native_phase_us": {
+            "input_binding": {
+              "p50": 20.85,
+              "p95": 44.22999999999999,
+              "p99": 47.578
+            },
+            "ort_run": {
+              "p50": 25242.0,
+              "p95": 29339.344999999998,
+              "p99": 30389.460000000003
+            },
+            "output_copy": {
+              "p50": 23.85,
+              "p95": 44.69999999999999,
+              "p99": 50.618
+            },
+            "total": {
+              "p50": 25310.55,
+              "p95": 29396.565,
+              "p99": 30461.083000000002
+            }
+          }
+        },
+        {
+          "native_latency_ms": {
+            "p50": 24.5497,
+            "p95": 28.467799999999997,
+            "p99": 29.149165
+          },
+          "python_ort_latency_ms": {
+            "p50": 25.41335,
+            "p95": 30.057105,
+            "p99": 32.106713000000006
+          },
+          "native_throughput_items_per_second": 162.93478128042298,
+          "native_phase_us": {
+            "input_binding": {
+              "p50": 20.25,
+              "p95": 35.855,
+              "p99": 39.379000000000005
+            },
+            "ort_run": {
+              "p50": 24458.9,
+              "p95": 28341.404999999995,
+              "p99": 28965.399999999998
+            },
+            "output_copy": {
+              "p50": 23.8,
+              "p95": 48.27999999999999,
+              "p99": 91.71900000000005
+            },
+            "total": {
+              "p50": 24515.4,
+              "p95": 28418.67,
+              "p99": 29090.038
+            }
+          }
+        },
+        {
+          "native_latency_ms": {
+            "p50": 23.5082,
+            "p95": 28.592254999999998,
+            "p99": 29.393599000000002
+          },
+          "python_ort_latency_ms": {
+            "p50": 25.950400000000002,
+            "p95": 32.87668,
+            "p99": 33.869982
+          },
+          "native_throughput_items_per_second": 170.15339328404556,
+          "native_phase_us": {
+            "input_binding": {
+              "p50": 18.75,
+              "p95": 36.12,
+              "p99": 38.501
+            },
+            "ort_run": {
+              "p50": 23408.15,
+              "p95": 28468.609999999997,
+              "p99": 29268.961
+            },
+            "output_copy": {
+              "p50": 24.799999999999997,
+              "p95": 44.834999999999994,
+              "p99": 45.955
+            },
+            "total": {
+              "p50": 23463.9,
+              "p95": 28545.504999999997,
+              "p99": 29344.72
+            }
+          }
+        }
+      ]
+    },
+    {
+      "workload": "reference",
+      "model_file": "generated_dynamic_multi_io_reference.onnx",
+      "model_sha256": "a861842e8ae4c712d69e8752b041d2ad7720bc289e86d074986b14241e44bf54",
+      "model_bytes": 231,
+      "batch": 3,
+      "runs": 30,
+      "warmup": 5,
+      "native_latency_ms": {
+        "p50": 0.0118,
+        "p95": 0.014199999999999996,
+        "p99": 0.018011000000000003
+      },
+      "python_ort_latency_ms": {
+        "p50": 0.0143,
+        "p95": 0.016899999999999995,
+        "p99": 0.017942
+      },
+      "python_ort_version": "1.32.0",
+      "native_throughput_items_per_second": 254237.28813559323,
+      "native_phase_us": {
+        "input_binding": {
+          "p50": 2.0,
+          "p95": 2.3,
+          "p99": 2.442
+        },
+        "ort_run": {
+          "p50": 6.35,
+          "p95": 6.7,
+          "p99": 6.7
+        },
+        "output_copy": {
+          "p50": 1.2,
+          "p95": 1.6099999999999994,
+          "p99": 2.1260000000000003
+        },
+        "total": {
+          "p50": 9.6,
+          "p95": 10.639999999999997,
+          "p99": 11.0
+        }
+      },
+      "outputs": {
+        "sum": {
+          "max_abs_error": 0.0,
+          "mean_abs_error": 0.0,
+          "allclose": true,
+          "shape": [
+            3,
+            4
+          ],
+          "dtype": "float32"
+        },
+        "argmax": {
+          "exact_match": true,
+          "shape": [
+            3
+          ],
+          "dtype": "int64"
+        }
+      },
+      "model_info": {
+        "inputs": [
+          {
+            "name": "left",
+            "shape": [
+              -1,
+              4
+            ],
+            "onnx_dtype": 1
+          },
+          {
+            "name": "right",
+            "shape": [
+              -1,
+              4
+            ],
+            "onnx_dtype": 1
+          }
+        ],
+        "outputs": [
+          {
+            "name": "sum",
+            "shape": [
+              -1,
+              4
+            ],
+            "onnx_dtype": 1
+          },
+          {
+            "name": "argmax",
+            "shape": [
+              -1
+            ],
+            "onnx_dtype": 7
+          }
+        ],
+        "provider": "CPUExecutionProvider",
+        "onnxruntime_version": "1.22.0"
+      },
+      "trial_count": 3,
+      "trials": [
+        {
+          "native_latency_ms": {
+            "p50": 0.01125,
+            "p95": 0.013664999999999998,
+            "p99": 0.015149000000000001
+          },
+          "python_ort_latency_ms": {
+            "p50": 0.0127,
+            "p95": 0.014655,
+            "p99": 0.020309000000000004
+          },
+          "native_throughput_items_per_second": 266666.6666666667,
+          "native_phase_us": {
+            "input_binding": {
+              "p50": 2.1,
+              "p95": 2.3,
+              "p99": 2.442
+            },
+            "ort_run": {
+              "p50": 6.0,
+              "p95": 6.3549999999999995,
+              "p99": 6.613
+            },
+            "output_copy": {
+              "p50": 1.3,
+              "p95": 1.5099999999999993,
+              "p99": 1.7420000000000002
+            },
+            "total": {
+              "p50": 9.3,
+              "p95": 10.355,
+              "p99": 10.471
+            }
+          }
+        },
+        {
+          "native_latency_ms": {
+            "p50": 0.0118,
+            "p95": 0.017614999999999985,
+            "p99": 0.021207000000000004
+          },
+          "python_ort_latency_ms": {
+            "p50": 0.014350000000000002,
+            "p95": 0.016929999999999997,
+            "p99": 0.017413
+          },
+          "native_throughput_items_per_second": 254237.28813559323,
+          "native_phase_us": {
+            "input_binding": {
+              "p50": 2.0,
+              "p95": 2.6199999999999988,
+              "p99": 4.0070000000000014
+            },
+            "ort_run": {
+              "p50": 6.35,
+              "p95": 7.074999999999998,
+              "p99": 11.063000000000004
+            },
+            "output_copy": {
+              "p50": 1.2,
+              "p95": 1.6099999999999994,
+              "p99": 2.1260000000000003
+            },
+            "total": {
+              "p50": 9.7,
+              "p95": 10.974999999999998,
+              "p99": 16.454000000000008
+            }
+          }
+        },
+        {
+          "native_latency_ms": {
+            "p50": 0.0119,
+            "p95": 0.014199999999999996,
+            "p99": 0.018011000000000003
+          },
+          "python_ort_latency_ms": {
+            "p50": 0.0143,
+            "p95": 0.016899999999999995,
+            "p99": 0.017942
+          },
+          "native_throughput_items_per_second": 252100.84033613442,
+          "native_phase_us": {
+            "input_binding": {
+              "p50": 2.0,
+              "p95": 2.2,
+              "p99": 2.342
+            },
+            "ort_run": {
+              "p50": 6.4,
+              "p95": 6.7,
+              "p99": 6.7
+            },
+            "output_copy": {
+              "p50": 1.2,
+              "p95": 1.884999999999998,
+              "p99": 2.342
+            },
+            "total": {
+              "p50": 9.6,
+              "p95": 10.639999999999997,
+              "p99": 11.0
+            }
+          }
+        }
+      ],
+      "performance_interpretation": "interface correctness only"
+    }
+  ],
+  "interpretation": [
+    "BGE and MobileNet are pretrained real models",
+    "the generated multi-input/output graph validates SDK contracts only",
+    "latencies are local Windows CPU evidence, not target-device claims"
+  ]
+}

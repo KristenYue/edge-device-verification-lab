@@ -29,9 +29,10 @@ jobs:
       - name: Build wheel and verify native reference graph
         run: |
           set -euo pipefail
-          python -m pip install numpy onnx onnxruntime scikit-build-core pybind11
+          python -m pip install numpy onnx onnxruntime pytest scikit-build-core pybind11
           python -m pip wheel ./inference_sdk --no-build-isolation --no-deps --wheel-dir artifacts --config-settings=cmake.define.ORT_ROOT="$PWD/vendor/ort"
           python -m pip install artifacts/edge_ai_sdk-*.whl
+          python -m pytest inference_sdk/tests -q
           python inference_sdk/examples/verify_session.py --output artifacts/linux-reference.json
       - name: Verify wheel in clean environment
         run: |

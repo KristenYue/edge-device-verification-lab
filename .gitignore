@@ -1,10 +1,13 @@
 .venv/
 .venv-sdk/
+.runtime/
 inference_sdk/vendor/
 inference_sdk/build/
-inference_sdk/models/
+inference_sdk/models/*
+!inference_sdk/models/README.md
 inference_sdk/dist/
 inference_sdk/.venv-clean/
+*.whl
 build/
 dist/
 *.obj

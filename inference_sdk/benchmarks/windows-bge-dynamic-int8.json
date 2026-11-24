@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "experiment": "onnxruntime_dynamic_int8_weight_quantization",
+  "scope": "CPUExecutionProvider; framework quantization, not custom kernels",
+  "static_quantization": {
+    "performed": false,
+    "reason": "activation calibration requires a representative task corpus; this milestone uses weight-only dynamic quantization for the Transformer encoder"
+  },
+  "dataset": {
+    "kind": "frozen_small_retrieval_smoke_set",
+    "documents": 8,
+    "queries": 4,
+    "limitation": "regression smoke metric, not production retrieval accuracy"
+  },
+  "fp32": {
+    "model_file": "bge-small-zh.onnx",
+    "model_sha256": "1005e14a3a75167ac4082f3e0e31a8c060a5c9f5941b2af82232b276783357c5",
+    "model_bytes": 94861055,
+    "batch": 12,
+    "sequence_length": 48,
+    "warmup": 5,
+    "runs": 30,
+    "latency_ms": {
+      "p50": 128.30554999999998,
+      "p95": 131.13321,
+      "p99": 131.387818
+    },
+    "throughput_items_per_second": 93.5267414386985,
+    "rss_before_session_bytes": 36417536,
+    "rss_after_benchmark_bytes": 222961664,
+    "peak_rss_bytes": 222961664,
+    "retrieval_smoke_recall_at_1": 1.0,
+    "retrieval_selected_documents": [
+      0,
+      1,
+      2,
+      7
+    ]
+  },
+  "dynamic_int8": {
+    "model_file": "bge-small-zh-dynamic-int8.onnx",
+    "model_sha256": "8bf83245da2be9609996598449dc17b8cbe3629274f4844f41acf767f4548711",
+    "model_bytes": 23939618,
+    "batch": 12,
+    "sequence_length": 48,
+    "warmup": 5,
+    "runs": 30,
+    "latency_ms": {
+      "p50": 48.29025,
+      "p95": 51.780215,
+      "p99": 52.398192
+    },
+    "throughput_items_per_second": 248.49736748101324,
+    "rss_before_session_bytes": 35688448,
+    "rss_after_benchmark_bytes": 119386112,
+    "peak_rss_bytes": 119386112,
+    "retrieval_smoke_recall_at_1": 0.5,
+    "retrieval_selected_documents": [
+      5,
+      1,
+      2,
+      3
+    ]
+  },
+  "comparison": {
+    "model_size_reduction_ratio": 0.7476349171954708,
+    "p50_speedup_ratio": 2.656965950683626,
+    "throughput_ratio": 2.656965950683626,
+    "max_abs_error": 0.04296617582440376,
+    "mean_abs_error": 0.009543489664793015,
+    "mean_cosine_similarity": 0.963508129119873,
+    "min_cosine_similarity": 0.955649197101593
+  }
+}
