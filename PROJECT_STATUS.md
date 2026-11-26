@@ -1,5 +1,15 @@
 # Project Status
 
+## 2026-11-26 SDK product-boundary milestone
+
+SDK `0.3.0` adds an execution-backend protocol, structured model/tensor
+contracts and session-level terminal outcome counters without replacing the
+existing native `InferenceSession` API. The checked Windows acceptance run is
+stored in `inference_sdk/benchmarks/windows-sdk-v030.json`; four SDK tests pass.
+
+This interface makes a later CUDA EP or device backend an explicit adapter
+task. It does not claim that a GPU/NPU backend has already been implemented.
+
 ## 2026-11-24 native inference SDK milestone
 
 The device runtime status below remains unchanged. A separate `inference_sdk/` vertical slice now has local Windows evidence for:

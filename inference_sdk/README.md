@@ -2,7 +2,7 @@
 
 [返回项目总览](../README.md) · [联合应用](https://github.com/KristenYue/telecom-network-incident-agent/blob/main/docs/evidence/native-llm-live.json) · [Ubuntu 验收](https://github.com/KristenYue/edge-device-verification-lab/actions/runs/44506857643)
 
-**C++17 · pybind11 · ONNX Runtime CPU · NumPy · 有界异步请求 · CMake / scikit-build-core**
+**C++17 · pybind11 · ONNX Runtime CPU · Typed Backend / Tensor Contract · 有界异步请求 · CMake / scikit-build-core**
 
 Python 应用通过 NumPy 调用 C++ 封装的 ONNX Session。分词与业务编排留在 Python；SDK 管理模型元数据、Tensor 输入契约、原生执行、输出所有权和异常转换。上层知识工具直接使用 `NativeEmbedder`，形成模型接口到业务应用的证据链。
 
@@ -22,9 +22,12 @@ flowchart LR
 |---|---|
 | Session 资源所有权 | Session 独立持有 Env 与 Options，确保析构依赖顺序；不依赖 Python 临时对象维持原生会话 |
 | Tensor 严格契约 | 校验输入名、rank、固定/动态维度、C-contiguous与ONNX dtype；支持多输入、多输出及常用数值输出类型，拒绝隐式类型转换 |
+| 稳定模型契约 | `ModelContract` / `TensorSpec` 将原生元数据转换成可序列化接口，显式给出NumPy dtype和动态轴；错误精确到输入名与维度 |
+| 可替换执行后端 | `InferenceBackend` Protocol隔离调度层与执行引擎；`NativeOrtBackend`是当前原生实现，后续CUDA EP/NPU适配无需改写异步队列 |
 | GIL 与输入生命周期 | Run 调用期间保留 NumPy 所有者引用，只在原生执行段释放 GIL；调用者不得并发修改输入 |
 | 输出生命周期 | 结果复制到 Python 拥有的数组，Session 或 ORT 临时输出销毁后仍可读 |
 | 有界异步请求 | 固定 Worker 数和等待队列容量；提交时复制输入；队列满、取消、排队超时和执行超时具有独立语义 |
+| 运行统计 | `SessionStats`累计admitted/rejected/completed/cancelled/timed_out/failed，并计算当前in-flight，便于容量与失败分析 |
 | 阶段 Trace | `run_profiled` 使用 C++ 单调时钟拆分输入绑定、ORT执行、输出复制与总时间；与异步请求的排队/执行时间形成两层 Trace |
 | 异常边界 | 参数错误为 `ValueError`，ORT 执行错误映射 `InferenceError` |
 | 可安装交付 | Wheel 携带运行库，Windows / Linux 干净环境独立安装执行；Linux 补齐 SONAME 别名 |
@@ -111,10 +114,11 @@ flowchart LR
 Linux 使用同一 CMake / Wheel 工程，完整可执行命令见 [Linux 构建流程](../.github/workflows/inference-sdk.yml)。
 
 ```python
-from edge_ai_sdk import InferenceSession
-session = InferenceSession("model.onnx")
-print(session.model_info())
-outputs = session.run({"input": input_array})
+from edge_ai_sdk import NativeOrtBackend
+
+backend = NativeOrtBackend("model.onnx")
+print(backend.contract.to_dict())
+outputs = backend.run({"input": input_array})
 ```
 
 异步调用显式限制活跃请求与等待队列。截止时间覆盖排队和执行；已经进入 ONNX Runtime 的调用不能被强制抢占，超时后只丢弃结果，不声称中断底层执行。
@@ -128,6 +132,7 @@ with AsyncInferenceSession("model.onnx", max_workers=2, max_queue=8) as session:
     )
     outputs = request.result()
     print(request.metrics.queue_ms, request.metrics.execution_ms)
+    print(session.stats())
 ```
 
 `inference_sdk/tests/test_inference_sdk.py` 使用动态 Batch 的双输入/双输出图验证元数据、`float32`与`int64`输出，并用确定性阻塞会话验证队列容量、取消、输入副本和超时结果丢弃。Windows 本地测试已通过；Ubuntu workflow 已配置执行该测试集，需以对应 CI 运行结果为准。
@@ -140,9 +145,9 @@ Agent 联合演示需设置 `EDGE_AI_MODEL_PATH`、`EDGE_AI_TOKENIZER_PATH` 和�
 
 Linux Wheel 的原生库存在 SONAME 运行时查找问题：编译通过不代表干净环境能加载。通过安装库别名并在全新虚拟环境执行参考图，验证完整打包路径。Windows 依赖通过微软官方 NuGet 取得，避免开发机隐式 DLL 路径掩盖缺失依赖。
 
-当前后端为 CPU Execution Provider；NPU / GPU、量化与自研算子属于不同适配范围。异步层当前位于 Python SDK，底层 `Run` 仍由 C++ 绑定执行并释放 GIL；尚未声称具备原生 C++ 调度器或可抢占推理。本页不将参考图延迟解释为预训练模型或目标芯片性能。
+当前可交付后端仍为 CPU Execution Provider；Backend Protocol证明的是接口解耦，不代表已经完成NPU/GPU适配。量化与自研算子属于不同适配范围。异步层当前位于 Python SDK，底层 `Run` 仍由 C++ 绑定执行并释放 GIL；尚未声称具备原生 C++ 调度器或可抢占推理。本页不将参考图延迟解释为预训练模型或目标芯片性能。
 
 
 ---
 
-文档与结果口径：2026-11-24。功能以对应源码和运行记录为准；场景、执行环境和数据来源随结果一并标注。
+文档与结果口径：2026-11-26。SDK 0.3.0新增Backend Protocol、结构化Tensor契约和会话级结果统计；功能以对应源码和运行记录为准。

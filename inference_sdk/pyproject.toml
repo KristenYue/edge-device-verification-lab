@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "edge-ai-sdk"
-version = "0.2.0"
+version = "0.3.0"
 requires-python = ">=3.11"
 dependencies = ["numpy>=1.26"]
 description = "Bounded C++/Python ONNX Runtime SDK with checked Tensor contracts"

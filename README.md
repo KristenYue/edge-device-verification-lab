@@ -7,13 +7,13 @@
 [返回技术作品集](https://github.com/KristenYue/KristenYue) · [机器人业务](https://github.com/KristenYue/telecom-network-incident-agent/blob/main/docs/ROBOT_DELIVERY.md) · [原生模型 SDK](https://github.com/KristenYue/edge-device-verification-lab/tree/main/inference_sdk) · [车辆 Agent](https://github.com/KristenYue/telecom-network-incident-agent/blob/main/docs/VEHICLE_ADAPTER.md)
 
 
-**C++17 · Python · RAII · TCP · CMake · pybind11 · ONNX Runtime CPU**
+**C++17 · Python · RAII · TCP · CMake · pybind11 · ONNX Runtime CPU · Typed Backend Contract**
 
 为上层智能应用提供两类可复用软件能力：**设备控制接口**和**跨语言模型执行接口**。前者管理设备状态、并发连接与请求身份；后者把 Python NumPy 输入交给 C++ ONNX Session 执行，并交还独立拥有内存的输出。
 
 | 您关注的职责 | 优先看什么 | 后续业务 |
 |---|---|---|
-| **AI 芯片应用 / 模型 SDK / C++ Python 接口** | [原生推理 SDK](inference_sdk/README.md)：Tensor 契约、GIL、生命周期、打包、数值对齐 | [真实模型 + 原生检索 + 设备诊断](https://github.com/KristenYue/telecom-network-incident-agent/blob/main/docs/evidence/native-llm-live.json) |
+| **AI 芯片应用 / 模型 SDK / C++ Python 接口** | [原生推理 SDK](inference_sdk/README.md)：Backend接口、Tensor契约、GIL、生命周期、打包、数值对齐 | [真实模型 + 原生检索 + 设备诊断](https://github.com/KristenYue/telecom-network-incident-agent/blob/main/docs/evidence/native-llm-live.json) |
 | **设备软件 / 工业工具链 / 机器人外设接口** | 本页：状态机、Socket RAII、有界并发、幂等缓存和排队期限 | [Agent 设备能力接入](https://github.com/KristenYue/telecom-network-incident-agent) |
 
 ## 架构
@@ -60,7 +60,7 @@ print(snapshot.state, snapshot.data)
 | 设备请求对照 | **4,200 / 4,200 成功** | Windows 11 / MSVC x64 Release，4 Worker、32 队列槽，status / start_run 各 3 轮、每轮 350 次。[原始数据](benchmarks/windows-baseline-comparison.json) |
 | 排队期限 | 单 Worker 被半帧连接占用时，下一连接超过配置 100 ms 期限后返回 **QUEUE_TIMEOUT** | 期限配置为 100 ms，不表示精确 100 ms 响应 SLA。[原始响应](benchmarks/windows-queue-deadline.json) |
 | 预训练模型对齐 | BGE `3×512` 输出最大绝对误差 **1.53×10⁻⁷** | Windows CPU，单线程，原生 ORT 1.22 / Python ORT 1.32。[原始结果](inference_sdk/benchmarks/windows-bge.json) |
-| 动态 Tensor 与异步接口 | 双输入/双输出动态 Batch、`float32/int64` 输出、有界 Worker/等待队列、取消与截止时间测试通过 | 队列满和超时语义由确定性阻塞会话验证；底层推理仍由释放 GIL 的 C++ `Run` 执行。[SDK 测试](inference_sdk/tests/test_inference_sdk.py) |
+| SDK接口与异步调度 | 双输入/双输出动态Batch、结构化Tensor契约、可替换Backend、有界队列、取消/截止时间和终态统计测试通过 | 当前实际Backend仍是释放GIL的C++ ONNX Runtime CPU执行；不声称已适配GPU/NPU。[SDK测试](inference_sdk/tests/test_inference_sdk.py) · [0.3.0验收](inference_sdk/benchmarks/windows-sdk-v030.json) |
 | 真实模型异步压力 | BGE 24 请求突发下，1/2/4 Worker 吞吐为 **7.79/15.05/25.89 req/s**；4 Worker 执行 P50 升至 **144.82 ms** | 更多 Worker 缩短排队但增加单次执行竞争；保留请求级 submitted/started/completed Trace。[原始结果](inference_sdk/benchmarks/windows-bge-async.json) |
 | 跨模型矩阵 | BGE动态Batch 1/4/12、MobileNetV2动态Batch 1/4均与Python ORT输出对齐 | 三个独立试验取中位数；MobileNet相邻Batch排序受本机波动影响，生成参考图只用于多I/O契约验证。[原始结果](inference_sdk/benchmarks/windows-model-matrix.json) |
 | CPU 动态 INT8 | 模型缩小 **74.8%**、本机 P50 约 **2.66×**，但冻结检索烟雾集 Recall@1 从 **1.00 降至 0.50** | 保留质量退化结论，不作为默认部署配置；框架量化而非自研算子。[原始结果](inference_sdk/benchmarks/windows-bge-dynamic-int8.json) |

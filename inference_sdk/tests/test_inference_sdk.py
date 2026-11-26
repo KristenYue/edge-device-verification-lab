@@ -9,6 +9,7 @@ import pytest
 from onnx import TensorProto, helper
 
 from edge_ai_sdk import InferenceSession
+from edge_ai_sdk.contracts import ModelContract, TensorSpec
 from edge_ai_sdk.async_session import (
     AsyncInferenceSession,
     InferenceTimeoutError,
@@ -96,6 +97,15 @@ class _BlockingSession:
         type(self).entered.clear()
         type(self).release.clear()
 
+    @property
+    def contract(self):
+        return ModelContract(
+            inputs=(TensorSpec("input", (-1,), 1),),
+            outputs=(TensorSpec("output", (-1,), 1),),
+            provider="test",
+            runtime_version="test",
+        )
+
     def model_info(self):
         return {"inputs": [], "outputs": [], "provider": "test"}
 
@@ -104,12 +114,15 @@ class _BlockingSession:
         assert type(self).release.wait(timeout=2)
         return {"output": feed["input"].copy()}
 
+    def run_profiled(self, feed):
+        return {"outputs": self.run(feed), "trace": {}}
 
-def test_async_queue_is_bounded_and_owns_inputs(monkeypatch):
-    import edge_ai_sdk.async_session as async_module
 
-    monkeypatch.setattr(async_module, "InferenceSession", _BlockingSession)
-    session = async_module.AsyncInferenceSession("unused", max_workers=1, max_queue=1)
+def test_async_queue_is_bounded_and_owns_inputs():
+    backend = _BlockingSession("unused")
+    session = AsyncInferenceSession(
+        backend=backend, max_workers=1, max_queue=1
+    )
     first_input = np.array([1.0], dtype=np.float32)
     first = session.submit({"input": first_input})
     assert _BlockingSession.entered.wait(timeout=1)
@@ -126,11 +139,26 @@ def test_async_queue_is_bounded_and_owns_inputs(monkeypatch):
     np.testing.assert_array_equal(first.result(timeout=1)["output"], [1.0])
     assert second.cancelled()
     session.close()
+    stats = session.stats()
+    assert stats.admitted == 2
+    assert stats.rejected == 1
+    assert stats.completed == 1
+    assert stats.cancelled == 1
+    assert stats.in_flight == 0
 
 
 class _SlowSession:
     def __init__(self, _):
         pass
+
+    @property
+    def contract(self):
+        return ModelContract(
+            inputs=(TensorSpec("input", (-1,), 1),),
+            outputs=(TensorSpec("output", (-1,), 1),),
+            provider="test",
+            runtime_version="test",
+        )
 
     def model_info(self):
         return {"inputs": [], "outputs": [], "provider": "test"}
@@ -139,12 +167,14 @@ class _SlowSession:
         time.sleep(0.03)
         return {"output": feed["input"]}
 
+    def run_profiled(self, feed):
+        return {"outputs": self.run(feed), "trace": {}}
 
-def test_async_deadline_discards_late_result(monkeypatch):
-    import edge_ai_sdk.async_session as async_module
 
-    monkeypatch.setattr(async_module, "InferenceSession", _SlowSession)
-    with AsyncInferenceSession("unused", max_workers=1, max_queue=0) as session:
+def test_async_deadline_discards_late_result():
+    with AsyncInferenceSession(
+        backend=_SlowSession("unused"), max_workers=1, max_queue=0
+    ) as session:
         request = session.submit(
             {"input": np.array([1.0], dtype=np.float32)}, deadline_ms=5
         )
@@ -152,3 +182,33 @@ def test_async_deadline_discards_late_result(monkeypatch):
             request.result(timeout=1)
         assert request.metrics is not None
         assert request.metrics.execution_ms >= 5
+        assert request.metrics.end_to_end_ms >= request.metrics.execution_ms
+    stats = session.stats()
+    assert stats.timed_out == 1
+    assert stats.in_flight == 0
+
+
+def test_model_contract_reports_named_tensor_failures():
+    contract = ModelContract(
+        inputs=(TensorSpec("image", (-1, 3, 4, 4), 1),),
+        outputs=(TensorSpec("embedding", (-1, 8), 1),),
+        provider="test",
+        runtime_version="test",
+    )
+
+    contract.validate_feed(
+        {"image": np.ones((2, 3, 4, 4), dtype=np.float32)}
+    )
+    assert contract.inputs[0].dynamic_axes == (0,)
+    assert contract.to_dict()["inputs"][0]["numpy_dtype"] == "float32"
+
+    with pytest.raises(ValueError, match=r"missing=\['image'\]"):
+        contract.validate_feed({"wrong": np.ones((1,), dtype=np.float32)})
+    with pytest.raises(TypeError, match="image.*dtype mismatch"):
+        contract.validate_feed(
+            {"image": np.ones((2, 3, 4, 4), dtype=np.float64)}
+        )
+    with pytest.raises(ValueError, match="dimension 1"):
+        contract.validate_feed(
+            {"image": np.ones((2, 1, 4, 4), dtype=np.float32)}
+        )

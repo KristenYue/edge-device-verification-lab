@@ -17,11 +17,16 @@ def __getattr__(name):
         "InferenceTimeoutError",
         "QueueFullError",
         "RequestMetrics",
+        "SessionStats",
     }:
         from . import async_session
 
         return getattr(async_session, name)
     raise AttributeError(name)
+
+
+from .backends import InferenceBackend, NativeOrtBackend
+from .contracts import ModelContract, TensorSpec
 
 
 __all__ += [
@@ -30,4 +35,9 @@ __all__ += [
     "InferenceTimeoutError",
     "QueueFullError",
     "RequestMetrics",
+    "SessionStats",
+    "InferenceBackend",
+    "NativeOrtBackend",
+    "ModelContract",
+    "TensorSpec",
 ]

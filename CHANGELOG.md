@@ -2,6 +2,25 @@
 
 All notable changes to this portfolio project are documented here.
 
+## [0.3.0] - 2026-11-26
+
+### Added
+
+- `InferenceBackend` protocol and checked `NativeOrtBackend` adapter.
+- Serializable `ModelContract` and `TensorSpec` with named dtype, rank,
+  dimension, contiguity and dynamic-axis validation.
+- Async session counters for admission, rejection, completion, cancellation,
+  timeout and backend failure outcomes.
+- SDK 0.3.0 acceptance artifact containing the runtime contract and backend.
+
+### Verified
+
+- Native Windows Wheel builds and installs with ONNX Runtime 1.22.0.
+- Four SDK tests cover native multi-I/O, queue ownership, deadlines, statistics
+  and named contract failures.
+- Generated reference graph remains numerically identical to Python ORT and
+  rejects invalid dtype, shape and stride inputs.
+
 ## [0.2.0] - 2026-11-13
 
 ### Added

@@ -1,0 +1,52 @@
+{
+  "schema_version": 2,
+  "sdk_version": "0.3.0",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "model_kind": "generated_reference_graph_not_pretrained",
+  "model_sha256": "2666a13eb9bd39e33653e39832c50cce5f98fd6c827ef434d01c1d397b556d14",
+  "max_abs_error": 0.0,
+  "rejected": [
+    "dtype",
+    "shape",
+    "stride"
+  ],
+  "runs": 100,
+  "warmup": 10,
+  "batch": 2,
+  "native_p50_ms": 0.0083,
+  "native_p95_ms": 0.009205,
+  "python_ort_version": "1.32.0",
+  "backend": "native-onnxruntime",
+  "contract": {
+    "inputs": [
+      {
+        "name": "input",
+        "shape": [
+          -1,
+          4
+        ],
+        "onnx_dtype": 1,
+        "numpy_dtype": "float32",
+        "dynamic_axes": [
+          0
+        ]
+      }
+    ],
+    "outputs": [
+      {
+        "name": "output",
+        "shape": [
+          -1,
+          3
+        ],
+        "onnx_dtype": 1,
+        "numpy_dtype": "float32",
+        "dynamic_axes": [
+          0
+        ]
+      }
+    ],
+    "provider": "CPUExecutionProvider",
+    "runtime_version": "1.22.0"
+  }
+}
